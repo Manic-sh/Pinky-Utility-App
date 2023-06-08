@@ -6,6 +6,7 @@ import ReferEarnSection from "../ReferEarnSection";
 import Select from 'react-select';
 import OfferImageSlider from "../OfferImageSlider";
 interface stateInterFace {
+    currentCategory:object
     isLoding: boolean,
     categories:any[],
     offers:any[]
@@ -13,12 +14,25 @@ interface stateInterFace {
 }
 const Home = () => {
     const [state, setUseState] = useState<stateInterFace>({
+        currentCategory:{
+            slug:null,
+        },
         isLoding: true,
         categories:[
             {
                 PayID:1,
                 IconClassName:"fas fa-credit-card",
                 PayCategory:"rechare",
+            },
+            {
+                PayID:1,
+                IconClassName:"fas fa-mobile-alt",
+                PayCategory:"phone rechareMobile Recharge",
+            },
+            {
+                PayID:1,
+                IconClassName:"fas fa-wifi",
+                PayCategory:"Pay your Broadbanad Bill",
             }
         ],
         offers:[
@@ -27,15 +41,16 @@ const Home = () => {
         ],
     })
     console.log("state=>",state?.categories);
-    const handleClick1 = (index:Number) =>{
+    const handleClick = (index:Number) =>{
         console.log("index",index);
     }
+
     return (
         <>
             <div id="main-wrapper">
                 <Header />
                 <div id="content">
-                    <div className="bg-secondary desktop-view" >
+                    {/* <div className="bg-secondary desktop-view" >
                         <div className="container">
                             <ul className="nav secondary-nav">
                                 <li className="nav-item"> <a className="nav-link active" href="index.html"><span><i
@@ -58,6 +73,22 @@ const Home = () => {
                                     className="fas fa-flask"></i></span> Gas</a> </li>
                                 <li className="nav-item"> <a className="nav-link" href="recharge-bill-water.html"><span><i
                                     className="fas fa-tint"></i></span> Water</a> </li>
+                            </ul>
+                        </div>
+                    </div> */}
+                    <div className="bg-secondary desktop-view">
+                        <div className="container">
+                            <ul className="nav secondary-nav">
+                                {state.categories && state.categories.map((category:any, index) => {
+                                    if (index < 6) {
+                                        return <li key={index} className="nav-item"> <div onClick={() => handleClick(index)} className={(category.slug == state?.currentCategory) ? 'active nav-link' : 'nav-link'}><span><i
+                                            className={category.IconClassName}></i></span> {category.PayCategory}</div> </li>
+                                    }
+                                })}
+                                {/* {
+                                    (addMoreOptions.length > 0) ? (<AddMoreOptions addMoreOptions={addMoreOptions} handleClick={handleClick} />) : (<span></span>)
+                                } */}
+
                             </ul>
                         </div>
                     </div>
