@@ -6,7 +6,6 @@ interface OfferImage{
     offers: any;
 }
 const OfferImageSlider = (props:OfferImage) => {
-    console.log("props offers images====>",props);
    const images = props.offers;
     const settings = {
         dots: true,
