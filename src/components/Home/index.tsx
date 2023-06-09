@@ -14,7 +14,7 @@ interface selectedPlanI {
     number: String,
     total_pay_amount: Number,
     txnid: String,
-    amount: Number,
+    amount: any,
 }
 interface currentCategoryIn {
     PayID: Number,
@@ -75,7 +75,7 @@ const Home = () => {
         number: '',
         total_pay_amount: 0,
         txnid: '',
-        amount: 0,
+        amount: '',
     });
     const [isNumberTrue, setIsNumberTrue] = useState(true);
     const [offers, setOffers] = useState<any>([]);
@@ -357,7 +357,7 @@ const Home = () => {
         let category: any = categories[index];
         history.push(category.slug);
         setCurrentCategory(category);
-        // setSubCategory(null);
+        // setSubCategory(...subCategory.billerParameters,[]);
         GetSubCategory(category.PayID);
         setErrorBillerName("")
         setBillPayForm({
@@ -449,7 +449,6 @@ const Home = () => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => {
-        FetchPrepaidPlan(plansInfo.operator, plansInfo.circle);
         (plansInfo.operator) ? GetCircle(plansInfo.operator) : console.log("operator not available");
         if (plansInfo.operator && plansInfo.circle) { FetchPrepaidPlan(plansInfo.operator, plansInfo.circle) };
         setShow(true);
@@ -511,7 +510,6 @@ const Home = () => {
     const numErrorStyle = {
         color: 'red'
     };
-    console.log("selectedPlan====>selectedPlan",selectedPlan);
     if (isLoading) {
         return <div id="preloader">
             <div data-loader="dual-ring"></div>
@@ -661,7 +659,6 @@ const Home = () => {
                                                 {numberError && <span style={numErrorStyle}>{numberError}</span>}
                                             </div>
                                             <div className="mb-3">
-                                                asdsad
                                                 <Select
                                                     placeholder="Select Your Operator"
                                                     value={selectedOption}
@@ -678,7 +675,7 @@ const Home = () => {
                                             </div>
                                             <div className="input-group mb-3"> <span className="input-group-text"></span> <div onClick={handleShow}
                                                 className="view-plans-link">View Plans </div>
-                                                <input className="form-control" id="amount" placeholder="Enter Amount" required type="text" value="" />
+                                                <input className="form-control" id="amount" placeholder="Enter Amount" required type="text" value={selectedPlan?.amount}/>
                                             </div>
                                             {planError && <span style={numErrorStyle}>{planError}</span>}
                                             <div className="d-grid">

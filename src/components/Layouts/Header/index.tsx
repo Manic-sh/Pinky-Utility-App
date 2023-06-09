@@ -6,8 +6,8 @@ const Header = () => {
             <div className="container">
                 <div className="header-row">
                     <div className="header-column justify-content-start">
-                        <div className="logo me-2 me-lg-3"> <a href='/' className="d-flex" title="HTML Template"><img
-                            src="assets/images/logo.png" alt="Quickai" /></a> </div>
+                        <div className="logo me-2 me-lg-3"> <Link to='/' className="d-flex" title="HTML Template"><img
+                            src="assets/images/logo.png" alt="Quickai" /></Link> </div>
                     </div>
                     <div className="header-column justify-content-end">
 

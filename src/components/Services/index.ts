@@ -77,7 +77,6 @@ export const userService = {
         }
     },
     allFetchPrepaidPlan: async (data:any) => {
-        data = { billerid:"IDEAPRE", CircleName: "Delhi NCR" }
         try {
             const response = await fetch(apiUrl + FetchPrepaidPlan, {
                 method: 'POST',
