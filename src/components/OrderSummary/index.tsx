@@ -18,7 +18,7 @@ interface selectedPlanI {
 
 }
 interface billplanInformationIn{
-    ConnectionNumber:String,
+    ConnectionNumber:any,
     biller_category:String,
     biller_name:String,
     validation_date:String,
@@ -31,7 +31,7 @@ const OrderSummary = () => {
     const [selectedPlan, setSelectedPlan] = useState<selectedPlanI>({
         PayId: 0,
         discount: 0,
-        is_recharge: true,
+        is_recharge: false,
         number: "",
         total_pay_amount: 0,
         txnid: "",
@@ -49,7 +49,7 @@ const OrderSummary = () => {
     const [couponCodeError, setCouponCodeError] = useState('');
     const [isRecharge, setIsRecharge] = useState(false);
     const [billplanInformation, setBillplanInformation] = useState<billplanInformationIn>({
-        ConnectionNumber:'',
+        ConnectionNumber:"",
         biller_category:'',
         biller_name:'',
         validation_date:'',
@@ -60,27 +60,20 @@ const OrderSummary = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [coupons, setCoupons] = useState([]);
     useEffect(() => {
-        const recharge_information = localStorage.getItem('recharge_information');
+        const recharge_information:any = localStorage.getItem('recharge_information');
         if (recharge_information) {
-            const recharge_info = JSON.parse(recharge_information);
+            const recharge_info:any = JSON.parse(recharge_information);
             recharge_info.total_pay_amount = recharge_info.amount;
             setSelectedPlan(recharge_info)
-            console.log("selectedPlan====>", selectedPlan);
+            // console.log("selectedPlan====>", selectedPlan);
         }
         const billplan_information = localStorage.getItem('billplan_information');
         if (billplan_information) {
             const bill_info = JSON.parse(billplan_information);
-            setBillplanInformation(bill_info)
-            console.log("billplanInformation========================>", billplanInformation);
-
+            // console.log("bill_info===>",bill_info);
+           
+            setBillplanInformation(bill_info);
         }
-        // const is_recharge = localStorage.getItem('is_recharge');
-        // if(is_recharge){
-        //     setIsRecharge(JSON.parse(is_recharge).is_recharge);
-
-        //     console.log("isRecharge====>",isRecharge);
-        // }
-
         getCouponCodeList();
     }, []);
 
@@ -189,7 +182,7 @@ const OrderSummary = () => {
                         <div className="col-lg-12 text-center mt-5">
                             <h2 className="text-8 mb-4">Order Summary</h2>
                         </div>
-                        {(selectedPlan?.is_recharge == true) ? (
+                        {(selectedPlan?.is_recharge) ? (
                             <div className="col-md-8 col-lg-7 col-xl-6 mx-auto">
                                 <div className="bg-white shadow-sm rounded text-3 p-3 pt-sm-4 pb-sm-5 px-sm-5 mb-0 mb-sm-4">
                                     <h3 className="text-5 fw-400 mb-3 mb-sm-4 text-center">Confirm Recharge Details</h3>

@@ -21,7 +21,7 @@ interface currentCategoryIn {
     offers: any[],
     slug: String,
     Payheading: String,
-    DefaultMessage: String
+    DefaultMessage: any
 }
 interface subCategoryIn {
     billerParameters: any[],
@@ -30,13 +30,14 @@ interface subCategoryIn {
 }
 interface billInformationIn {
     validationid: Number,
-    amount: Number,
+    amount: any,
     txnid: String,
-    ConnectionNumber: Number
+    ConnectionNumber: Number,
+    is_recharge:boolean
 }
 interface plansInfoIn {
     operator: Number;
-    circle: String;
+    circle: any;
 }
 const Home = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +59,7 @@ const Home = () => {
     const [prepaidcategory, setPrepaidCategory] = useState([]);
     const [prepaidplanlist, setPrepaidPlanList] = useState([]);
     const [plantype, setPlantype] = useState([]);
-    const [plans, setPlans] = useState([]);
+    const [plans, setPlans] = useState<any>([]);
     const [allplans, setAllPlans] = useState([]);
     const [currentCategory, setCurrentCategory] = useState<currentCategoryIn>({
         PayID: 0,
@@ -82,17 +83,18 @@ const Home = () => {
     const [billerid, setBillerid] = useState('');
     const [errorBillerName, setErrorBillerName] = useState('');
     const [chargeableAmount, setChargeableAmount] = useState(0);
-    const [billPayForm, setBillPayForm] = useState({
+    const [billPayForm, setBillPayForm] = useState<any>({
         billerInfo: "",
         ConnectionNumber: "",
         // amount: 0,
     });
-    const [connectionNumberError, setConnectionNumberError] = useState('');
+    const [connectionNumberError, setConnectionNumberError] = useState<any>('');
     const [billInformation, setBilIInformation] = useState<billInformationIn>({
         validationid: 0,
         amount: 0,
         txnid: '',
         ConnectionNumber: 0,
+        is_recharge:true
     });
 
     useEffect(() => {
@@ -256,23 +258,24 @@ const Home = () => {
     };
     const handleBillPaymentSubmit = async (event: any) => {
         event.preventDefault();
+        console.log("handleBillPaymentSubmit")
         setErrorBillerName('');
-        // if (!billPayForm.billerInfo) {
-        //     setErrorBillerName("Please select any one operator!");
-        //     return false;
-        // }
+        if (!billPayForm.billerInfo) {
+            setErrorBillerName("Please select any one operator!");
+            return false;
+        }
         // if (!billPayForm.ConnectionNumber) {
         //     setConnectionNumberError("Please Enter connectionNumber!");
         //     return false;
         // }
-        // const RegexPattern = new RegExp(billPayForm.billerInfo.RegexPattern);
-        // if (!RegexPattern.test(billPayForm.ConnectionNumber)) {
-        //     console.log("If");
-        //     setConnectionNumberError(subCategory.ErrorMsg);
-        //     console.log("else");
-        //     return false;
+        const RegexPattern = new RegExp(billPayForm.billerInfo.RegexPattern);
+        if (!RegexPattern.test(billPayForm.ConnectionNumber)) {
+            console.log("If");
+            setConnectionNumberError(subCategory.ErrorMsg);
+            console.log("else");
+            return false;
 
-        // }
+        }
         // const data = {
         //     ConnectionNumber: billPayForm.ConnectionNumber,
         //     ParameterName: billPayForm.billerInfo.ParameterName,
@@ -342,10 +345,12 @@ const Home = () => {
             // var txnid = (new Date()).getTime()+ Math.random().toString(16).slice(2);
             var txnid = Math.random().toString(16).slice(2);
             billInformation.txnid = txnid;
+            billInformation.is_recharge = true;
             // setBillPayForm({ amount: billInformation?.billlist[0]?.billamount,  });
             const billplan_information = JSON.stringify(billInformation);
             localStorage.setItem('billplan_information', billplan_information);
-            // localStorage.setItem('is_recharge', false);
+            
+            // localStorage.setItem('is_recharge', billInformation.is_recharge);
             history.push('/pay/order-summary');
         }
     }
@@ -357,7 +362,11 @@ const Home = () => {
         let category: any = categories[index];
         history.push(category.slug);
         setCurrentCategory(category);
-        // setSubCategory(...subCategory.billerParameters,[]);
+        setSubCategory({
+            billerParameters: [],
+            billerid: 0,
+            ErrorMsg: '',
+        });
         GetSubCategory(category.PayID);
         setErrorBillerName("")
         setBillPayForm({
@@ -449,9 +458,11 @@ const Home = () => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => {
+        setIsLoading(true);
         (plansInfo.operator) ? GetCircle(plansInfo.operator) : console.log("operator not available");
         if (plansInfo.operator && plansInfo.circle) { FetchPrepaidPlan(plansInfo.operator, plansInfo.circle) };
         setShow(true);
+        setIsLoading(false);
     }
     const handlePlanTypeChange = (event: any) => {
         let plantype = event.target.value;
@@ -482,14 +493,14 @@ const Home = () => {
         // }
     };
     const handleInputBillPaymentChange = (index: number, event: any) => {
-        // const { name, value } = event.target;
-        // setBillPayForm((prevProps) => ({
-        //     ...prevProps,
-        //     [name]: value
-        // }));
-        // console.log("subCategory",subCategory.billerParameters);
+        const { name, value } = event.target;
+        setBillPayForm((prevProps:any) => ({
+            ...prevProps,
+            [name]: value
+        }));
+        console.log("subCategory",subCategory.billerParameters);
         // let billerParameter = subCategory.billerParameters[index];
-        // console.log("subCategory.billerParameters[index]=>", subCategory.billerParameters[index]);
+        console.log("subCategory.billerParameters[index]=>", subCategory.billerParameters[index]);
 
         const billerParameter = subCategory.billerParameters[index];
         const RegexPattern = new RegExp(billerParameter.RegexPattern);
@@ -653,7 +664,7 @@ const Home = () => {
                                         <form id="recharge-bill" method="post" onSubmit={handleSubmit}>
                                             <div className="mb-3">
                                                 <input type="text" className="form-control" data-bv-field="number" id="mobileNumber" required
-                                                    name="number" value={rechargeForm.number} onChange={handleInputChange}
+                                                    name="number" value={rechargeForm.number} placeholder={currentCategory && currentCategory.DefaultMessage} onChange={handleInputChange}
 
                                                 />
                                                 {numberError && <span style={numErrorStyle}>{numberError}</span>}
@@ -704,10 +715,10 @@ const Home = () => {
                                                 ))
                                             }
                                             {isPartialPay ? (<div className="mb-3">
-                                                <input type="text" className="form-control" data-bv-field="amount" id="amount" readOnly onChange={(event: any) => setChargeableAmount(event.target.value)}
+                                                <input type="text" className="form-control" data-bv-field="amount" id="amount" value={billInformation.amount} readOnly onChange={(event: any) => setChargeableAmount(event.target.value)}
                                                     placeholder="Amount" name="amount" />
                                             </div>) : (<div className="mb-3">
-                                                <input type="text" className="form-control" data-bv-field="amount" id="amount" onChange={(event: any) => setChargeableAmount(event.target.value)}
+                                                <input type="text" className="form-control" data-bv-field="amount" id="amount" value={billInformation.amount} onChange={(event: any) => setChargeableAmount(event.target.value)}
                                                     placeholder="Amount" name="amount" />
                                             </div>)}
 
@@ -811,7 +822,7 @@ const Home = () => {
                                 />
                             </div>
                             <div className="col-12 col-sm-6 col-lg-4">
-                                <select className="form-select" required name="circle" onChange={handlePlanChange}>
+                                <select className="form-select" required name="circle" value={plansInfo.circle} onChange={handlePlanChange}>
                                     <option value="">Select Your Circle</option>
                                     {circles.map((circle: any, index: number) => {
                                         return <option key={JSON.stringify(index)} value={circle.CircleName}>{circle.CircleName}</option>

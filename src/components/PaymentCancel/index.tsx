@@ -1,4 +1,13 @@
+import { useState } from 'react';
 import { useHistory, useParams, useLocation } from 'react-router-dom';
+interface paymentResponseIn{
+    status:any,
+    txnid:any,
+    firstname:String,
+    lastname:String,
+    amount:number,
+    phone:number
+}
 const PaymentCancel = () => {
     const location = useLocation();
     const status = new URLSearchParams(location.search).get("status");
@@ -8,14 +17,15 @@ const PaymentCancel = () => {
     const amount = new URLSearchParams(location.search).get("amount");
     const phone = new URLSearchParams(location.search).get("phone");
 
-    const data = {
+   
+    const [state, setState] = useState({
         status: status,
         txnid: txnid,
         firstname: firstname,
         lastname: lastname,
         amount: amount,
         phone: phone
-    }
+    })
 
     // const {status} = useParams();
     console.log("status=>", status);
@@ -62,7 +72,7 @@ const PaymentCancel = () => {
                         <div className="bg-white shadow-sm rounded p-4 p-lg-5 mb-4">
                             <div className="row">
                                 <div className="col-sm text-muted">Transactions ID</div>
-                                <div className="col-sm text-sm-end fw-600">{data.txnid}</div>
+                                <div className="col-sm text-sm-end fw-600">{state.txnid}</div>
                             </div>
                             <hr />
                             <div className="row">
@@ -87,7 +97,7 @@ const PaymentCancel = () => {
                             <hr />
                             <div className="row">
                                 <div className="col-sm text-muted">Mobile No</div>
-                                <div className="col-sm text-sm-end fw-600">(+91) {data.phone}</div>
+                                <div className="col-sm text-sm-end fw-600">(+91) {state.phone}</div>
                             </div>
                             <hr />
                             <div className="row">
@@ -97,7 +107,7 @@ const PaymentCancel = () => {
                             <hr />
                             <div className="row">
                                 <div className="col-sm text-muted">Payment Amount</div>
-                                <div className="col-sm text-sm-end text-6 fw-500">{data.amount}</div>
+                                <div className="col-sm text-sm-end text-6 fw-500">{state.amount}</div>
                             </div>
                         </div>
                         <div className="text-center"> <a href="#" className="btn-link text-muted mx-3 my-2 align-items-center d-inline-flex"><span className="text-5 me-2"><i className="far fa-file-pdf"></i></span>Save as PDF</a> <a href="#" className="btn-link text-muted mx-3 my-2 align-items-center d-inline-flex"><span className="text-5 me-2"><i className="fas fa-print"></i></span>Print Receipt</a> <a href="#" className="btn-link text-muted mx-3 my-2 align-items-center d-inline-flex"><span className="text-5 me-2"><i className="far fa-envelope"></i></span>Email Receipt</a>
@@ -106,7 +116,7 @@ const PaymentCancel = () => {
                     </div>
                 </div>
             </div>
-        </div><a id="back-to-top" data-bs-toggle="tooltip" title="Back to Top" href=""><i className="fa fa-chevron-up"></i></a></>
+        </div><a id="back-to-top" state-bs-toggle="tooltip" title="Back to Top" href=""><i className="fa fa-chevron-up"></i></a></>
 
     )
 }

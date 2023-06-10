@@ -16,19 +16,19 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [url, setUrl] = useState('');
   useEffect(() => {
-    async function getCategories() {
-      const categorylists = await userService.getCategoriesList();
-      setCategories(categorylists);
-      const newurl = '/' + categorylists[0].slug;
-      setUrl(newurl);
-      setData(data);
-      setIsLoading(false);
-      // if (!isLoading && data) {
-      //   history.push('/dth');
-      // }
-    }
     getCategories();
   }, []);
+  async function getCategories() {
+    const categorylists = await userService.getCategoriesList();
+    setCategories(categorylists);
+    const newurl = '/' + categorylists[0].slug;
+    setUrl(newurl);
+    setData(data);
+    setIsLoading(false);
+    // if (!isLoading && data) {
+    //   history.push('/dth');
+    // }
+  }
 
   if (isLoading) {
     return <div id="preloader">
@@ -43,10 +43,10 @@ function App() {
       <Route exact path='/' component={Home} />
       <Route exact path="/pay/order-summary" component={OrderSummary} />
       <Route exact path="/pay/payment" component={Payment} />
-      <Route exact path= '/pay/payment-success' component={PaymentSuccess} />
-      <Route exact path= '/pay/payment-cancel' component={PaymentCancel} />
+      <Route exact path='/pay/payment-success' component={PaymentSuccess} />
+      <Route exact path='/pay/payment-cancel' component={PaymentCancel} />
       {/* <Redirect to='/' /> */}
-      <Footer/>
+      <Footer />
     </HashRouter>
   );
 }

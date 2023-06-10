@@ -20,12 +20,23 @@ interface selectedPlanI {
     plan_description:String,
     billerid:number,
 }
+interface billplanInformationIn{
+    ConnectionNumber:any,
+    biller_category:String,
+    biller_name:String,
+    validation_date:String,
+    valid_until:String,
+    amount:number,
+    billlist:any[],
+    billerid:any,
+    txnid:String
+}
 const Payment = () => {
     const location = useLocation();
     const [selectedPlan, setSelectedPlan] = useState<selectedPlanI>({
         PayId: 0,
         discount: 0,
-        is_recharge: true,
+        is_recharge: false,
         number: "",
         total_pay_amount: 0,
         txnid: "",
@@ -36,12 +47,23 @@ const Payment = () => {
         validity:'',
         circle_name:'',
         plan_description:'',
-        billerid:0
+        billerid:0,
+        
     });
     const [isDiscountApply, setIsDiscountApply] = useState(false);
     const [amount, setAmount] = useState<any>(0);
     const [paymentMethods, setPaymentMethods] = useState<any>([]);
-    const [billInformation, setBillInformation] = useState<any>(null);
+    const [billInformation, setBillInformation] = useState<billplanInformationIn>({
+        ConnectionNumber:"",
+        biller_category:'',
+        biller_name:'',
+        validation_date:'',
+        valid_until:'',
+        amount:0,
+        billlist:[],
+        billerid:'',
+        txnid:""
+    });
     const [isLoading, setIsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('');
     const [upis, setUPI] = useState([]);
@@ -55,8 +77,8 @@ const Payment = () => {
     const [cardInfo, setCardInfo] = useState(
         { card_number: '5123456789012346', expiry_month: '02', expiry_year: '2028', cvv: '52', card_holder_name: 'suraj' })
 
-    const furl = window.location.origin + "/recharge/#/pay/payment-success";
-    const surl = window.location.origin + "/recharge/#/pay/payment-cancel";
+    const furl = window.location.origin + "/#/pay/payment-success";
+    const surl = window.location.origin + "/#/pay/payment-cancel";
 
     useEffect(() => {
         const recharge_information = localStorage.getItem('recharge_information');
@@ -65,10 +87,18 @@ const Payment = () => {
             setSelectedPlan(recharge_info);
 
         }
+        // const billplan_information = localStorage.getItem('billplan_information');
+        // if (billplan_information) {
+        //     setBillInformation(JSON.parse(billplan_information));
+        //     console.log("billInformation==>",billInformation);
+        //     console.log("first")
+        // }
         const billplan_information = localStorage.getItem('billplan_information');
         if (billplan_information) {
-            setBillInformation(JSON.parse(billplan_information));
-
+            const bill_info:any = JSON.parse(billplan_information);
+            console.log("bill_info===>",bill_info);
+           
+            setBillInformation(bill_info);
         }
     }, []);
 
