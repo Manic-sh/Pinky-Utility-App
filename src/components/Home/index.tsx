@@ -1,11 +1,11 @@
-import { Link, useLocation, useHistory } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import DownloadOurApp from "../DownloadOurApp";
 import ReferEarnSection from "../ReferEarnSection";
 import React, { useState, useEffect } from 'react';
 import OfferImageSlider from "../OfferImageSlider";
 import { userService } from "../Services";
 import Select from 'react-select';
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import AddMoreOptions from "./AddMoreOptions";
 interface selectedPlanI {
     PayId: Number,
@@ -58,8 +58,6 @@ const Home = () => {
 
     const [prepaidcategory, setPrepaidCategory] = useState([]);
     const [prepaidplanlist, setPrepaidPlanList] = useState([]);
-    const [plantype, setPlantype] = useState([]);
-    const [plans, setPlans] = useState<any>([]);
     const [allplans, setAllPlans] = useState([]);
     const [currentCategory, setCurrentCategory] = useState<currentCategoryIn>({
         PayID: 0,
@@ -173,8 +171,8 @@ const Home = () => {
         setIsLoading(false);
     }
 
-    const pageName = location.pathname;
-    const currentPage = pageName.replace('/', '');
+    // const pageName = location.pathname;
+    // const currentPage = pageName.replace('/', '');
 
     // let isNumberTrue = true;
     // if (categories.length > 0) {
@@ -240,10 +238,10 @@ const Home = () => {
             setNumberError("Please enter a valid phone number");
             return false;
         }
-        // if (selectedPlan.length == 0) {
-        //     setPlanError("Please select Plan");
-        //     return false;
-        // }
+        if (!selectedPlan.PayId) {
+            setPlanError("Please select Plan");
+            return false;
+        }
         selectedPlan.total_pay_amount = selectedPlan.amount;
         // selectedPlan.discount = 0;
         selectedPlan.is_recharge = true;
@@ -258,16 +256,15 @@ const Home = () => {
     };
     const handleBillPaymentSubmit = async (event: any) => {
         event.preventDefault();
-        console.log("handleBillPaymentSubmit")
         setErrorBillerName('');
         if (!billPayForm.billerInfo) {
             setErrorBillerName("Please select any one operator!");
             return false;
         }
-        // if (!billPayForm.ConnectionNumber) {
-        //     setConnectionNumberError("Please Enter connectionNumber!");
-        //     return false;
-        // }
+        if (!billPayForm.ConnectionNumber) {
+            setConnectionNumberError("Please Enter connectionNumber!");
+            return false;
+        }
         const RegexPattern = new RegExp(billPayForm.billerInfo.RegexPattern);
         if (!RegexPattern.test(billPayForm.ConnectionNumber)) {
             console.log("If");
@@ -276,27 +273,13 @@ const Home = () => {
             return false;
 
         }
-        // const data = {
-        //     ConnectionNumber: billPayForm.ConnectionNumber,
-        //     ParameterName: billPayForm.billerInfo.ParameterName,
-        //     BillerID: billPayForm.billerInfo.billerid,
-        //     firstname: "amar",
-        //     lastname: "gupta",
-        //     mobile: "8882288881",
-        //     email: "amar@pinkitravels.com",
-        //     IPAddress: "61.246.34.128",
-        //     MACAddress: "11-AC-58-21-1B-AA"
-        // }
-        // console.log("subCategory=>", subCategory.billerParameters);
         const parametersListData: any = [];
-
         subCategory?.billerParameters.map((billerParameter: any, index: Number) => {
             parametersListData.push({
                 ParameterName: billerParameter.ParameterName,
                 ConnectionNumber: billerParameter.ConnectionNumber,
             })
         })
-        // console.log("parametersListData=====>", parametersListData);
         const data = {
             parametersLists: parametersListData,
             BillerID: subCategory?.billerid,
@@ -427,7 +410,7 @@ const Home = () => {
     };
     useEffect(() => {
         if (plansInfo.operator && plansInfo.circle) {
-            // FetchPrepaidPlan(plansInfo.operator, plansInfo.circle);
+            FetchPrepaidPlan(plansInfo.operator, plansInfo.circle);
         }
 
     }, [plansInfo]);
@@ -436,7 +419,6 @@ const Home = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     const handleOperatorChange = (e: any) => {
         setSelectedOption(e);
-        setPayNumber('');
         setErrorBillerName("");
         let currentSubCategory = e;//subCategoryList[e.target.value];
         setBillPayForm({
@@ -479,19 +461,8 @@ const Home = () => {
         setSelectedPlan(selectedplan);
         setShow(false);
     }
-    const [payNumber, setPayNumber] = useState('');
-    const [emailError, setEmailError] = useState('');
     const [isPartialPay, setIsPartialPay] = useState(true);
-    const handleNumberChange = (event: any) => {
-        const { name, value: any } = event.target;
-        // setPayNumber(value);
-        // let RegexPattern:any = /subCategory.RegexPattern/;
-        // if (!RegexPattern.test(value)) {
-        //     setEmailError(subCategory.ErrorMsg);
-        // } else {
-        //     setEmailError('');
-        // }
-    };
+    
     const handleInputBillPaymentChange = (index: number, event: any) => {
         const { name, value } = event.target;
         setBillPayForm((prevProps:any) => ({
@@ -709,16 +680,16 @@ const Home = () => {
                                                     <div className="mb-3">
                                                         <input type="text" className="form-control" data-bv-field={billerParameter?.ConnectionNumber} required value={billerParameter?.ConnectionNumber} onChange={(event: any) => handleInputBillPaymentChange(index, event)}
                                                             placeholder={billerParameter?.ParameterName} name={billerParameter?.ConnectionNumber} />
-                                                        {(billerParameter?.isError == true) && <span style={numErrorStyle}> {billerParameter?.ErrorMsg} </span>}
-                                                        <span>{billerParameter?.ErrorMs} {billerParameter?.ConnectionNumber}</span>
+                                                        {/* {(billerParameter?.isError == true) && <span style={numErrorStyle}> {billerParameter?.ErrorMsg} </span>} */}
+                                                        
                                                     </div>
                                                 ))
                                             }
                                             {isPartialPay ? (<div className="mb-3">
-                                                <input type="text" className="form-control" data-bv-field="amount" id="amount" value={billInformation.amount} readOnly onChange={(event: any) => setChargeableAmount(event.target.value)}
+                                                <input type="text" className="form-control" data-bv-field="amount" id="amount" value={chargeableAmount} readOnly onChange={(event: any) => setChargeableAmount(event.target.value)}
                                                     placeholder="Amount" name="amount" />
                                             </div>) : (<div className="mb-3">
-                                                <input type="text" className="form-control" data-bv-field="amount" id="amount" value={billInformation.amount} onChange={(event: any) => setChargeableAmount(event.target.value)}
+                                                <input type="text" className="form-control" data-bv-field="amount" id="amount" value={chargeableAmount} onChange={(event: any) => setChargeableAmount(event.target.value)}
                                                     placeholder="Amount" name="amount" />
                                             </div>)}
 

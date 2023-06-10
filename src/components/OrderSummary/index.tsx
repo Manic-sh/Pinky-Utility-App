@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { userService } from "../Services";
 interface selectedPlanI {
@@ -27,7 +27,6 @@ interface billplanInformationIn{
     billlist:any[]
 }
 const OrderSummary = () => {
-    const location = useLocation();
     const [selectedPlan, setSelectedPlan] = useState<selectedPlanI>({
         PayId: 0,
         discount: 0,
@@ -47,7 +46,6 @@ const OrderSummary = () => {
     const [isDiscountApply, setIsDiscountApply] = useState(false);
     const [discounAmount, setDiscounAmount] = useState(0);
     const [couponCodeError, setCouponCodeError] = useState('');
-    const [isRecharge, setIsRecharge] = useState(false);
     const [billplanInformation, setBillplanInformation] = useState<billplanInformationIn>({
         ConnectionNumber:"",
         biller_category:'',
@@ -65,13 +63,10 @@ const OrderSummary = () => {
             const recharge_info:any = JSON.parse(recharge_information);
             recharge_info.total_pay_amount = recharge_info.amount;
             setSelectedPlan(recharge_info)
-            // console.log("selectedPlan====>", selectedPlan);
         }
         const billplan_information = localStorage.getItem('billplan_information');
         if (billplan_information) {
             const bill_info = JSON.parse(billplan_information);
-            // console.log("bill_info===>",bill_info);
-           
             setBillplanInformation(bill_info);
         }
         getCouponCodeList();
@@ -87,12 +82,11 @@ const OrderSummary = () => {
         const cuponCodeList = await userService.DisplayCouponCode(data);
         setCoupons(cuponCodeList.Coupons)
         setIsLoading(false);
-        // setShow(true);
     }
 
-    const handelCouponCodeChange = (event:any) => {
-        setCouponCode(event.target.value)
-    }
+    // const handelCouponCodeChange = (event:any) => {
+    //     setCouponCode(event.target.value)
+    // }
     const applyCouponCode = async (e:any) => {
         if (!couponCode) {
             setCouponCodeError("Please enter coupon code")
@@ -116,7 +110,9 @@ const OrderSummary = () => {
                 setIsDiscountApply(true);
                 selectedPlan.total_pay_amount = (selectedPlan.total_pay_amount - discount).toFixed(2);
                 selectedPlan.discount = discount;
+                // setSelectedPlan(...selectedPlan,total_pay_amount:'200');
                 setSelectedPlan(selectedPlan);
+                console.log("selectedPlan==>",selectedPlan);
                 localStorage.setItem('recharge_information', JSON.stringify(selectedPlan));
 
             }

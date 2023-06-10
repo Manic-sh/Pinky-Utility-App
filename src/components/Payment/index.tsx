@@ -1,9 +1,7 @@
-import { Link, useLocation } from 'react-router-dom';
-import React, { useState, useEffect, useId } from 'react';
+import React, { useState, useEffect } from 'react';
 import { userService } from "../Services";
 import { PaymentService } from '../Services/PaymentService';
-import { Modal, Button } from "react-bootstrap";
-import { UrlWithStringQuery } from 'url';
+import { Modal } from "react-bootstrap";
 interface selectedPlanI {
     PayId: Number,
     discount: any,
@@ -32,7 +30,6 @@ interface billplanInformationIn{
     txnid:String
 }
 const Payment = () => {
-    const location = useLocation();
     const [selectedPlan, setSelectedPlan] = useState<selectedPlanI>({
         PayId: 0,
         discount: 0,
@@ -50,7 +47,6 @@ const Payment = () => {
         billerid:0,
         
     });
-    const [isDiscountApply, setIsDiscountApply] = useState(false);
     const [amount, setAmount] = useState<any>(0);
     const [paymentMethods, setPaymentMethods] = useState<any>([]);
     const [billInformation, setBillInformation] = useState<billplanInformationIn>({
@@ -69,8 +65,6 @@ const Payment = () => {
     const [upis, setUPI] = useState([]);
     const [wallets, setWallets] = useState([]);
 
-
-    const [showPopup, setShowPopup] = useState(true);
     const [htmlContent, setHtmlContent] = useState('');
     const [show, setShow] = useState(false);
     const [txnid, setTxnid] = useState<any>('');
@@ -123,18 +117,6 @@ const Payment = () => {
             [name]: value
         }));
     };
-
-    const paypentPayForm = (event:any) => {
-
-        event.preventDefault();
-        // payPaymentRequestWithCard(data)
-    };
-    // async function payPaymentRequestWithCard() {
-    //     setIsLoading(true);
-    //     const paymentMethodList = await PaymentService.payPaymentWithCard(billerid);
-
-    //     setIsLoading(false);
-    // }
 
     async function getPaymentMethodList(billerid:number) {
         setIsLoading(true);
@@ -226,7 +208,6 @@ const Payment = () => {
         const paymentresponse:any = await PaymentService.payPaymentRequestwithWallets(data);
         setHtmlContent(paymentresponse);
         setShow(true);
-        setShowPopup(true);
         setIsLoading(false);
     }
     const handlePayPaymentWithCard = () => {
@@ -255,7 +236,6 @@ const Payment = () => {
         const paymentresponse:any = await PaymentService.payPaymentWithCard(data);
         setHtmlContent(paymentresponse);
         setShow(true);
-        setShowPopup(true);
         setIsLoading(false);
     }
     async function payPaymentRequestwithUPI(data:any) {
@@ -263,7 +243,6 @@ const Payment = () => {
         const paymentresponse:any = await PaymentService.payPaymentRequestwithUPI(data);
         setHtmlContent(paymentresponse);
         setShow(true);
-        setShowPopup(true);
         setIsLoading(false);
     }
     const handleClose = () => setShow(false);

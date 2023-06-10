@@ -1,13 +1,4 @@
-import { useState } from 'react';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
-interface paymentResponseIn{
-    status:any,
-    txnid:any,
-    firstname:String,
-    lastname:String,
-    amount:number,
-    phone:number
-}
+import { useLocation } from 'react-router-dom';
 const PaymentCancel = () => {
     const location = useLocation();
     const status = new URLSearchParams(location.search).get("status");
@@ -16,21 +7,14 @@ const PaymentCancel = () => {
     const lastname = new URLSearchParams(location.search).get("lastname");
     const amount = new URLSearchParams(location.search).get("amount");
     const phone = new URLSearchParams(location.search).get("phone");
-
-   
-    const [state, setState] = useState({
+    const state = {
         status: status,
         txnid: txnid,
         firstname: firstname,
         lastname: lastname,
         amount: amount,
         phone: phone
-    })
-
-    // const {status} = useParams();
-    console.log("status=>", status);
-    const history = useHistory();
-    console.log("history=>", history);
+    }
     return (
         <><div id="content">
             <div className="container">
