@@ -261,10 +261,10 @@ const Home = () => {
             setErrorBillerName("Please select any one operator!");
             return false;
         }
-        if (!billPayForm.ConnectionNumber) {
-            setConnectionNumberError("Please Enter connectionNumber!");
-            return false;
-        }
+        // if (!billPayForm.ConnectionNumber) {
+        //     setConnectionNumberError("Please Enter connectionNumber!");
+        //     return false;
+        // }
         const RegexPattern = new RegExp(billPayForm.billerInfo.RegexPattern);
         if (!RegexPattern.test(billPayForm.ConnectionNumber)) {
             console.log("If");
