@@ -8,7 +8,7 @@ import Select from 'react-select';
 import { Modal } from "react-bootstrap";
 import AddMoreOptions from "./AddMoreOptions";
 interface selectedPlanI {
-    PayId: Number,
+    planid: Number,
     discount: Number,
     is_recharge: Boolean
     number: String,
@@ -33,7 +33,7 @@ interface billInformationIn {
     amount: any,
     txnid: String,
     ConnectionNumber: Number,
-    is_recharge:boolean
+    is_recharge: boolean
 }
 interface plansInfoIn {
     operator: Number;
@@ -68,7 +68,7 @@ const Home = () => {
     });
     const [numberType, setNumberType] = useState(true);
     const [selectedPlan, setSelectedPlan] = useState<selectedPlanI>({
-        PayId: 0,
+        planid: 0,
         discount: 0,
         is_recharge: true,
         number: '',
@@ -92,7 +92,7 @@ const Home = () => {
         amount: 0,
         txnid: '',
         ConnectionNumber: 0,
-        is_recharge:true
+        is_recharge: true
     });
 
     useEffect(() => {
@@ -238,7 +238,7 @@ const Home = () => {
             setNumberError("Please enter a valid phone number");
             return false;
         }
-        if (!selectedPlan.PayId) {
+        if (!selectedPlan.planid) {
             setPlanError("Please select Plan");
             return false;
         }
@@ -332,7 +332,7 @@ const Home = () => {
             // setBillPayForm({ amount: billInformation?.billlist[0]?.billamount,  });
             const billplan_information = JSON.stringify(billInformation);
             localStorage.setItem('billplan_information', billplan_information);
-            
+
             // localStorage.setItem('is_recharge', billInformation.is_recharge);
             history.push('/pay/order-summary');
         }
@@ -462,14 +462,14 @@ const Home = () => {
         setShow(false);
     }
     const [isPartialPay, setIsPartialPay] = useState(true);
-    
+
     const handleInputBillPaymentChange = (index: number, event: any) => {
         const { name, value } = event.target;
-        setBillPayForm((prevProps:any) => ({
+        setBillPayForm((prevProps: any) => ({
             ...prevProps,
             [name]: value
         }));
-        console.log("subCategory",subCategory.billerParameters);
+        console.log("subCategory", subCategory.billerParameters);
         // let billerParameter = subCategory.billerParameters[index];
         console.log("subCategory.billerParameters[index]=>", subCategory.billerParameters[index]);
 
@@ -540,7 +540,7 @@ const Home = () => {
                                                             <form id="recharge-bill" method="post" onSubmit={handleSubmit}>
                                                                 <div className="mb-3">
                                                                     <input type="text" className="form-control" data-bv-field="number" id="mobileNumber" required
-                                                                        name="number" value={rechargeForm.number} onChange={handleInputChange} />
+                                                                        name="number" value={rechargeForm.number} onChange={handleInputChange} placeholder={currentCategory && currentCategory.DefaultMessage} />
                                                                     {numberError && <span style={numErrorStyle}>{numberError}</span>}
                                                                 </div>
                                                                 <div className="mb-3">
@@ -556,7 +556,7 @@ const Home = () => {
                                                                 </div>
                                                                 <div className="input-group mb-3"> <span className="input-group-text"></span> <div onClick={handleShow}
                                                                     className="view-plans-link">View Plans</div>
-                                                                    <input className="form-control" id="amount" placeholder="Enter Amount" required type="text" />
+                                                                    <input className="form-control" id="amount" placeholder="Enter Amount" required type="text" value={selectedPlan?.amount} />
                                                                 </div>
                                                                 {planError && <span style={numErrorStyle}>{planError}</span>}
                                                                 <div className="d-grid">
@@ -566,14 +566,6 @@ const Home = () => {
                                                         ) : (
                                                             <form id="recharge-bill" method="post" onSubmit={handleBillPaymentSubmit}>
                                                                 <div className="mb-3">
-
-                                                                    {/* <select className="form-select" id="operator" name="operator" required="" onChange={handleOperatorChange}>
-                                                                        <option value="">Select Your Operator</option>
-                                                                        {subCategoryList && subCategoryList.map((subCategory, index) => {
-                                                                            return <option key={JSON.stringify(index)} value={index} selected={billPayForm?.billerInfo?.billerid === subCategory.billerid}>{subCategory.BillerName}</option>;
-                                                                        })}
-                                                                    </select> */}
-
                                                                     <Select
                                                                         placeholder="Select Your Operator"
                                                                         value={selectedOption}
@@ -588,16 +580,9 @@ const Home = () => {
                                                                         <div className="mb-3">
                                                                             <input type="text" className="form-control" data-bv-field={billerParameter?.ConnectionNumber} required value={billerParameter?.ConnectionNumber} onChange={(event: any) => handleInputBillPaymentChange(index, event)}
                                                                                 placeholder={billerParameter?.ParameterName} name={billerParameter?.ConnectionNumber} />
-                                                                            {(billerParameter?.isError == true) && <span style={numErrorStyle}> {billerParameter?.ErrorMsg} </span>}
-                                                                            <span>{billerParameter?.ErrorMs} {billerParameter?.ConnectionNumber}</span>
-                                                                        </div>
+                                                                           </div>
                                                                     ))
                                                                 }
-                                                                {/* <div className="mb-3">
-                                                                    <input type="text" className="form-control" data-bv-field="ConnectionNumber" id="ConnectionNumber" required value={billPayForm.ConnectionNumber} onChange={handleInputBillPaymentChange}
-                                                                        placeholder={subCategory?.ParameterName} name="ConnectionNumber" />
-                                                                    {connectionNumberError && <span style={numErrorStyle}>{connectionNumberError}</span>}
-                                                                </div> */}
                                                                 {isPartialPay ? (<div className="mb-3">
                                                                     <input type="text" className="form-control" data-bv-field="amount" id="amount" value={chargeableAmount} readOnly onChange={(event: any) => setChargeableAmount(event.target.value)}
                                                                         placeholder="Amount" name="amount" />
@@ -629,7 +614,7 @@ const Home = () => {
                         <div className="bg-white shadow-md rounded p-4">
                             <div className="row g-4">
                                 <div className="col-lg-4 col-xxl-5">
-                                    
+
                                     <h2 className="text-4 mb-3">{currentCategory.Payheading}</h2>
                                     {isNumberTrue ? (
                                         <form id="recharge-bill" method="post" onSubmit={handleSubmit}>
@@ -646,18 +631,18 @@ const Home = () => {
                                                     value={selectedOption}
                                                     options={subCategoryList}
                                                     onChange={handleOperatorChange}
-                                                    // getOptionLabel={(e:null) => (
-                                                    //     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    //         <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
-                                                    //         <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
-                                                    //     </div>
-                                                    // )}
+                                                // getOptionLabel={(e:null) => (
+                                                //     <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                //         <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
+                                                //         <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
+                                                //     </div>
+                                                // )}
                                                 />
                                                 {/* <SelectOperator subCategoryList={subCategoryList} billerid={billerid} plansInfo={plansInfo} handleOperatorChange={handleOperatorChange} /> */}
                                             </div>
                                             <div className="input-group mb-3"> <span className="input-group-text"></span> <div onClick={handleShow}
                                                 className="view-plans-link">View Plans </div>
-                                                <input className="form-control" id="amount" placeholder="Enter Amount" required type="text" value={selectedPlan?.amount}/>
+                                                <input className="form-control" id="amount" placeholder="Enter Amount" required type="text" value={selectedPlan?.amount} />
                                             </div>
                                             {planError && <span style={numErrorStyle}>{planError}</span>}
                                             <div className="d-grid">
@@ -681,7 +666,7 @@ const Home = () => {
                                                         <input type="text" className="form-control" data-bv-field={billerParameter?.ConnectionNumber} required value={billerParameter?.ConnectionNumber} onChange={(event: any) => handleInputBillPaymentChange(index, event)}
                                                             placeholder={billerParameter?.ParameterName} name={billerParameter?.ConnectionNumber} />
                                                         {/* {(billerParameter?.isError == true) && <span style={numErrorStyle}> {billerParameter?.ErrorMsg} </span>} */}
-                                                        
+
                                                     </div>
                                                 ))
                                             }
