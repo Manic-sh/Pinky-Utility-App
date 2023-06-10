@@ -802,7 +802,7 @@ const Home = () => {
 
                                 <div className="col-4 col-lg-2 text-5 text-center">Validity Days</div>
 
-                                <div className="col-3 col-lg-1 text-5 text-center">Category</div>
+                                <div className="col-5 col-lg-1 text-5 text-center">Category</div>
 
                                 <div className="col-5 col-lg-3 text-5 text-center">Description</div>
 
