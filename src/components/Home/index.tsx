@@ -153,7 +153,7 @@ const Home = () => {
     }
     async function getGetOperatorDetails(number: Number) {
         console.log("subCategoryList===>", subCategoryList);
-        setIsLoading(true);
+        // setIsLoading(true);
         const operatorDetails = await userService.getGetOperatorDetailsList(number);
         plansInfo.operator = operatorDetails?.billerid;
         plansInfo.circle = operatorDetails?.circle_name;
@@ -168,7 +168,7 @@ const Home = () => {
         setBillerid(operatorDetails?.billerid);
         // setCircleName(operatorDetails.circle_name);
         setPlansInfo(plansInfo);
-        setIsLoading(false);
+        // setIsLoading(false);
     }
 
     // const pageName = location.pathname;
@@ -505,7 +505,7 @@ const Home = () => {
                         <div className="container">
                             <ul className="nav secondary-nav">
                                 {categories && categories.map((category: any, index: number) => {
-                                    if (index < 6) {
+                                    if (index < 7) {
                                         return <li key={JSON.stringify(index)} className="nav-item"> <div onClick={handleClick(index)} className="nav-link" ><span><i
                                             className={category.IconClassName}></i></span> {category.PayCategory}</div> </li>
                                     }
