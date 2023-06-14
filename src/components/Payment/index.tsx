@@ -155,19 +155,6 @@ const Payment = () => {
     const handleWalletPayment = (index: number) => {
         let wallet: any = wallets[index];
         let txnid = (selectedPlan?.txnid) ? selectedPlan?.txnid : (billInformation?.txnid);
-        // const data = {
-        //     txnid: txnid,
-        //     "amount": "10.00",
-        //     "firstname": "Adnan",
-        //     "email": "test@gmail.com",
-        //     phone: "7839295503",
-        //     "productinfo": "iPhone14",
-        //     pg: wallet.pg,
-        //     bankcode: "@".wallet?.Bankcode,
-        //     surl: surl,
-        //     furl: furl,
-        //     "clientid": "0"
-        //   }
         const data = {
             txnid: txnid,
             amount: amount,
@@ -306,117 +293,235 @@ const Payment = () => {
                                     <div className="row">
                                         <div className="col-md-4 col-lg-3">
                                             <ul className="nav nav-tabs flex-column" id="myTab" role="tablist">
-                                                <li className="nav-item"> <a className="nav-link active" id="first-tab" data-bs-toggle="tab" href="#firstTab" role="tab" aria-controls="firstTab" aria-selected="true">Credit/Debit Cards</a> </li>
-                                                <li className="nav-item"> <a className="nav-link" id="second-tab" data-bs-toggle="tab" href="#secondTab" role="tab" aria-controls="secondTab" aria-selected="false">PayPal</a> </li>
+                                                {/* <li className="nav-item"> <a className="nav-link active" id="first-tab" data-bs-toggle="tab" href="#firstTab" role="tab" aria-controls="firstTab" aria-selected="true">Credit/Debit Cards</a> </li>
+                                                <li className="nav-item"> <a className="nav-link" id="second-tab" data-bs-toggle="tab" href="#secondTab" role="tab" aria-controls="secondTab" aria-selected="false">PayPal</a> </li> */}
+                                                {
+                                                    paymentMethods && paymentMethods.map((payment: any, index: number) => (
+                                                        // <li key={index} className="nav-item">
+                                                        //     <button className={(payment.Paymethod == activeTab) ? 'nav-link text-4 lh-lg active' : 'nav-link text-4 lh-lg'} onClick={() => handleTabClick(index)}>{payment.Paymethod}</button>
+                                                        // </li>
+                                                        <li key={index} className="nav-item"> <a className={(payment.Paymethod == activeTab) ? 'nav-link text-4 lh-lg active' : 'nav-link text-4 lh-lg'}  id="second-tab" data-bs-toggle="tab" onClick={() => handleTabClick(index)} role="tab" aria-controls="secondTab" aria-selected="false">{payment.Paymethod}</a> </li>
+                                                    ))
+                                                }
                                             </ul>
                                         </div>
                                         <div className="col-md-3 col-lg-5">
-                                            <div className="tab-content my-3" id="myTabContentVertical">
-                                                <div className="tab-pane fade show active" id="firstTab" role="tabpanel" aria-labelledby="first-tab">
-                                                    <div className="row">
-                                                        <div className="col-lg-12">
-                                                            <h3 className="text-5 mb-4">Enter Card Details</h3>
-                                                            <form id="payment" method="post">
-                                                                <div className="row g-3">
-                                                                    <div className="col-12">
-                                                                        <label className="form-label" htmlFor="cardNumber">Enter Debit / Credit Card Number</label>
-                                                                        <input type="text" className="form-control" data-bv-field="cardnumber" id="cardNumber" required placeholder="Card Number" />
-                                                                    </div>
-                                                                    <div className="col-lg-4">
-                                                                        <div>
-                                                                            <label className="form-label" htmlFor="expiryMonth">Expiry Month</label>
-                                                                            <select id="expiryMonth" className="form-select" >
-                                                                                <option value="">Expiry Month</option>
-                                                                                <option value="1">January</option>
-                                                                                <option value="2">February</option>
-                                                                                <option value="3">March</option>
-                                                                                <option value="1">April</option>
-                                                                                <option value="1">May</option>
-                                                                                <option value="1">June</option>
-                                                                                <option value="1">July</option>
-                                                                                <option value="1">August</option>
-                                                                                <option value="1">September</option>
-                                                                                <option value="1">October</option>
-                                                                                <option value="1">November</option>
-                                                                                <option value="1">December</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-lg-4">
-                                                                        <div>
-                                                                            <label className="form-label" htmlFor="expiryYear">Expiry Year</label>
-                                                                            <select id="expiryYear" className="form-select">
-                                                                                <option value="">Expiry Year</option>
-                                                                                <option>2018</option>
-                                                                                <option>2019</option>
-                                                                                <option>2020</option>
-                                                                                <option>2021</option>
-                                                                                <option>2022</option>
-                                                                                <option>2023</option>
-                                                                                <option>2024</option>
-                                                                                <option>2025</option>
-                                                                                <option>2026</option>
-                                                                                <option>2027</option>
-                                                                                <option>2028</option>
-                                                                                <option>2029</option>
-                                                                                <option>2030</option>
-                                                                                <option>2031</option>
-                                                                                <option>2032</option>
-                                                                                <option>2033</option>
-                                                                                <option>2034</option>
-                                                                                <option>2035</option>
-                                                                                <option>2036</option>
-                                                                                <option>2037</option>
-                                                                                <option>2038</option>
-                                                                                <option>2039</option>
-                                                                                <option>2040</option>
-                                                                                <option>2041</option>
-                                                                                <option>2042</option>
-                                                                                <option>2043</option>
-                                                                                <option>2044</option>
-                                                                                <option>2045</option>
-                                                                                <option>2046</option>
-                                                                                <option>2047</option>
-                                                                                <option>2048</option>
-                                                                                <option>2049</option>
-                                                                                <option>2050</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-lg-4">
-                                                                        <label className="form-label" htmlFor="cvvNumber">CVV</label>
-                                                                        <input type="text" className="form-control" data-bv-field="cvvnumber" id="cvvNumber" required placeholder="CVV Number" />
-                                                                    </div>
-                                                                    <div className="col-12">
-                                                                        <label className="form-label" htmlFor="cardHolderName">Card Holder Name</label>
-                                                                        <input type="text" className="form-control" data-bv-field="cardholdername" id="cardHolderName" required placeholder="Card Holder Name" />
-                                                                    </div>
-                                                                    <div className="col-12">
-                                                                        <div className="form-check">
-                                                                            <input id="save-card" name="savecard" className="form-check-input" type="checkbox" />
-                                                                            <label className="form-check-label" htmlFor="save-card">Save my card Details.</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-12 d-grid"> <a className="btn btn-primary" href="recharge-payment-success.html">Proceed to Pay</a> </div>
+                                            <div className="tab-content" id="myTabContentVertical">
+
+                                                {activeTab === 'CreditCard' && <div className="tab-pane fade show active" id="CreditCard" role="tabpanel" aria-labelledby="first-tab">
+                                                    <h3 className="text-5 mb-4">Enter Credit Card Details</h3>
+                                                    <form id="payment" method="post" onSubmit={handlePayPaymentWithCard}>
+                                                        <div className="row g-3">
+                                                            <div className="col-12">
+                                                                <label className="form-label" htmlFor="card_number">Enter Credit Card Number</label>
+                                                                <input type="text" className="form-control" data-bv-field="card_number" id="card_number" name='card_number' required placeholder="Card Number" value={cardInfo.card_number} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <div>
+                                                                    <label className="form-label" htmlFor="expiryMonth">Expiry Month</label>
+                                                                    <select id="expiryMonth" className="form-select" required name='expiry_month' value={cardInfo.expiry_month} onChange={handleCardInfo}>
+                                                                        <option value="">Expiry Month</option>
+                                                                        <option value="1">January</option>
+                                                                        {
+                                                                            months && months.map((month, index) => (
+                                                                                <option key={index} value={month.id}>{month.name}</option>
+                                                                            ))
+                                                                        }
+                                                                    </select>
                                                                 </div>
-                                                            </form>
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <div>
+                                                                    <label className="form-label" htmlFor="expiryYear">Expiry Year</label>
+                                                                    <select id="expiryYear" className="form-select" required name='expiry_year' value={cardInfo.expiry_year} onChange={handleCardInfo}>
+                                                                        <option value="">Expiry Year</option>
+                                                                        {
+                                                                            years && years.map((year, index) => (
+                                                                                <option key={index}>{year}</option>
+                                                                            ))
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <label className="form-label" htmlFor="cvvNumber">CVV</label>
+                                                                <input type="text" className="form-control" data-bv-field="cvvnumber" id="cvvNumber" required placeholder="CVV Number" name='cvv' value={cardInfo.cvv} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-12">
+                                                                <label className="form-label" htmlFor="cardHolderName">Card Holder Name</label>
+                                                                <input type="text" className="form-control" data-bv-field="cardholdername" id="cardHolderName" required placeholder="Card Holder Name" name='card_holder_name' value={cardInfo.card_holder_name} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-12">
+                                                                <div className="form-check">
+                                                                    <input id="save-card" name="savecard" className="form-check-input" type="checkbox" />
+                                                                    <label className="form-check-label" htmlFor="save-card">Save my card Details.</label>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-12 d-grid"> <button className="btn btn-primary" >Proceed to Pay</button> </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div className="tab-pane fade" id="secondTab" role="tabpanel" aria-labelledby="second-tab">
-                                                    <div className="row">
-                                                        <div className="col-md-12"> <img className="img-fluid" src="assets/images/paypal-logo.png" alt="Paypal Logo" title="Pay easily, fast and secure with PayPal." />
-                                                            <p className="lead">Pay easily, fast and secure with PayPal.</p>
-                                                            <p className="alert alert-info mb-4"><i className="fas fa-info-circle"></i> You will be redirected to PayPal to complete your payment securely.</p>
-                                                            <button className="btn btn-primary d-flex align-items-center" type="submit"><i className="fab fa-paypal fa-2x me-2"></i> Pay via PayPal</button>
+                                                    </form>
+                                                </div>}
+                                                {activeTab === 'DebitCard' && <div className="tab-pane fade show active" id="DebitCard" role="tabpanel" aria-labelledby="first-tab">
+                                                    <h3 className="text-5 mb-4">Enter Debit Card Details</h3>
+                                                    <form id="payment" method="post" onSubmit={handlePayPaymentWithCard}>
+                                                        <div className="row g-3">
+                                                            <div className="col-12">
+                                                                <label className="form-label" htmlFor="card_number">Enter Credit Card Number</label>
+                                                                <input type="text" className="form-control" data-bv-field="card_number" id="card_number" name='card_number' required placeholder="Card Number" value={cardInfo.card_number} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <div>
+                                                                    <label className="form-label" htmlFor="expiryMonth">Expiry Month</label>
+                                                                    <select id="expiryMonth" className="form-select" required name='expiry_month' value={cardInfo.expiry_month} onChange={handleCardInfo}>
+                                                                        <option value="">Expiry Month</option>
+                                                                        <option value="1">January</option>
+                                                                        {
+                                                                            months && months.map((month, index) => (
+                                                                                <option key={index} value={month.id}>{month.name}</option>
+                                                                            ))
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <div>
+                                                                    <label className="form-label" htmlFor="expiryYear">Expiry Year</label>
+                                                                    <select id="expiryYear" className="form-select" required name='expiry_year' value={cardInfo.expiry_year} onChange={handleCardInfo}>
+                                                                        <option value="">Expiry Year</option>
+                                                                        {
+                                                                            years && years.map((year, index) => (
+                                                                                <option key={index}>{year}</option>
+                                                                            ))
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <label className="form-label" htmlFor="cvvNumber">CVV</label>
+                                                                <input type="text" className="form-control" data-bv-field="cvvnumber" id="cvvNumber" required placeholder="CVV Number" name='cvv' value={cardInfo.cvv} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-12">
+                                                                <label className="form-label" htmlFor="cardHolderName">Card Holder Name</label>
+                                                                <input type="text" className="form-control" data-bv-field="cardholdername" id="cardHolderName" required placeholder="Card Holder Name" name='card_holder_name' value={cardInfo.card_holder_name} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-12">
+                                                                <div className="form-check">
+                                                                    <input id="save-card" name="savecard" className="form-check-input" type="checkbox" />
+                                                                    <label className="form-check-label" htmlFor="save-card">Save my card Details.</label>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-12 d-grid"> <button className="btn btn-primary" >Proceed to Pay</button> </div>
                                                         </div>
+                                                    </form>
+                                                </div>}
+                                                {activeTab === 'PrepaidCard' && <div className="tab-pane fade show active" id="PrepaidCard" role="tabpanel" aria-labelledby="first-tab">
+                                                    <h3 className="text-5 mb-4">Enter Prepaid Card Details</h3>
+                                                    <form id="payment" method="post" onSubmit={handlePayPaymentWithCard}>
+                                                        <div className="row g-3">
+                                                            <div className="col-12">
+                                                                <label className="form-label" htmlFor="card_number">Enter Credit Card Number</label>
+                                                                <input type="text" className="form-control" data-bv-field="card_number" id="card_number" name='card_number' required placeholder="Card Number" value={cardInfo.card_number} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <div>
+                                                                    <label className="form-label" htmlFor="expiryMonth">Expiry Month</label>
+                                                                    <select id="expiryMonth" className="form-select" required name='expiry_month' value={cardInfo.expiry_month} onChange={handleCardInfo}>
+                                                                        <option value="">Expiry Month</option>
+                                                                        <option value="1">January</option>
+                                                                        {
+                                                                            months && months.map((month, index) => (
+                                                                                <option key={index} value={month.id}>{month.name}</option>
+                                                                            ))
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <div>
+                                                                    <label className="form-label" htmlFor="expiryYear">Expiry Year</label>
+                                                                    <select id="expiryYear" className="form-select" required name='expiry_year' value={cardInfo.expiry_year} onChange={handleCardInfo}>
+                                                                        <option value="">Expiry Year</option>
+                                                                        {
+                                                                            years && years.map((year, index) => (
+                                                                                <option key={index}>{year}</option>
+                                                                            ))
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <label className="form-label" htmlFor="cvvNumber">CVV</label>
+                                                                <input type="text" className="form-control" data-bv-field="cvvnumber" id="cvvNumber" required placeholder="CVV Number" name='cvv' value={cardInfo.cvv} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-12">
+                                                                <label className="form-label" htmlFor="cardHolderName">Card Holder Name</label>
+                                                                <input type="text" className="form-control" data-bv-field="cardholdername" id="cardHolderName" required placeholder="Card Holder Name" name='card_holder_name' value={cardInfo.card_holder_name} onChange={handleCardInfo} />
+                                                            </div>
+                                                            <div className="col-12">
+                                                                <div className="form-check">
+                                                                    <input id="save-card" name="savecard" className="form-check-input" type="checkbox" />
+                                                                    <label className="form-check-label" htmlFor="save-card">Save my card Details.</label>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-12 d-grid"> <button className="btn btn-primary">Proceed to Pay</button> </div>
+                                                        </div>
+                                                    </form>
+                                                </div>}
+                                                {activeTab === 'UPI' && <div className="tab-pane fade show active" id="UPI" role="tabpanel" aria-labelledby="first-tab">
+                                                    <h3 className="text-5 mb-4">Select Any UPI</h3>
+                                                    <div className="row g-3">
+                                                        {
+                                                            upis && upis.map((upi: any, index: number) => (
+                                                                <div key={index} className="col-12">
+                                                                    <div className="row">
+                                                                        <div className='col-2'>
+                                                                            <input type="radio" name='upi' onClick={() => handleUPIPayment(index)} />
+                                                                        </div>
+                                                                        <div className="col-2">
+                                                                            <div style={{ height: "60px", width: "60px" }}>
+                                                                                <img className="img-fluid" src={upi?.LogoPath} alt="Paypal Logo" title="Pay easily, fast and secure with PayPal." />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-8 text-left">
+                                                                            <span>{upi?.PaymentName}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        }
                                                     </div>
-                                                </div>
+                                                </div>}
+                                                {activeTab === 'Wallet' && <div className="tab-pane fade show active" id="Wallet" role="tabpanel" aria-labelledby="first-tab">
+                                                    <h3 className="text-5 mb-4">Pay payment any Wallet</h3>
+                                                    <div className="row g-3">
+                                                        {
+                                                            wallets && wallets.map((wallet: any, index: number) => (
+                                                                <div key={index} className="col-12">
+                                                                    <div className="row">
+                                                                        <div className="col-2">
+                                                                            <div style={{ height: "30px", width: "30px" }}>
+                                                                                <img className="img-fluid" src={wallet?.LogoPath} alt="Paypal Logo" title="Pay easily, fast and secure with PayPal." />
+
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-6 text-left">
+                                                                            <span>{wallet?.PaymentName}</span>
+                                                                        </div>
+                                                                        <div className="col-4">
+                                                                            <span><button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={() => handleWalletPayment(index)}>Pay</button></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                </div>}
+
                                             </div>
                                         </div>
                                         <div className="col-md-5 col-lg-4">
                                             <div className='row'>
-                                            <div className='col-md-12 col-lg-12'>
+                                                <div className='col-md-12 col-lg-12'>
                                                     {(selectedPlan?.is_recharge == true) ? (
                                                         <div className="bg-light-2 rounded p-4 mb-4">
                                                             <h3 className="text-5 mb-4">Payable Amount</h3>
@@ -488,272 +593,7 @@ const Payment = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-12 mx-auto mt-3">
-
-                            <div className="bg-white shadow-sm rounded p-4 p-lg-5">
-                                <div className="row gx-5">
-                                    <div className="col-md-7 col-lg-7 order-1 order-md-0">
-                                        <ul className="nav nav-tabs mb-4 nav-fill" id="myTab" role="tablist">
-                                            {
-                                                paymentMethods && paymentMethods.map((payment: any, index: number) => (
-                                                    <li key={index} className="nav-item">
-                                                        <button className={(payment.Paymethod == activeTab) ? 'nav-link text-4 lh-lg active' : 'nav-link text-4 lh-lg'} onClick={() => handleTabClick(index)}>{payment.Paymethod}</button>
-                                                    </li>
-                                                ))
-                                            }
-                                        </ul>
-
-                                        <div className="tab-content" id="myTabContentVertical">
-
-                                            {activeTab === 'CreditCard' && <div className="tab-pane fade show active" id="CreditCard" role="tabpanel" aria-labelledby="first-tab">
-                                                <h3 className="text-5 mb-4">Enter Credit Card Details</h3>
-                                                <form id="payment" method="post" onSubmit={handlePayPaymentWithCard}>
-                                                    <div className="row g-3">
-                                                        <div className="col-12">
-                                                            <label className="form-label" htmlFor="card_number">Enter Credit Card Number</label>
-                                                            <input type="text" className="form-control" data-bv-field="card_number" id="card_number" name='card_number' required placeholder="Card Number" value={cardInfo.card_number} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <div>
-                                                                <label className="form-label" htmlFor="expiryMonth">Expiry Month</label>
-                                                                <select id="expiryMonth" className="form-select" required name='expiry_month' value={cardInfo.expiry_month} onChange={handleCardInfo}>
-                                                                    <option value="">Expiry Month</option>
-                                                                    <option value="1">January</option>
-                                                                    {
-                                                                        months && months.map((month, index) => (
-                                                                            <option key={index} value={month.id}>{month.name}</option>
-                                                                        ))
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <div>
-                                                                <label className="form-label" htmlFor="expiryYear">Expiry Year</label>
-                                                                <select id="expiryYear" className="form-select" required name='expiry_year' value={cardInfo.expiry_year} onChange={handleCardInfo}>
-                                                                    <option value="">Expiry Year</option>
-                                                                    {
-                                                                        years && years.map((year, index) => (
-                                                                            <option key={index}>{year}</option>
-                                                                        ))
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <label className="form-label" htmlFor="cvvNumber">CVV</label>
-                                                            <input type="text" className="form-control" data-bv-field="cvvnumber" id="cvvNumber" required placeholder="CVV Number" name='cvv' value={cardInfo.cvv} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <label className="form-label" htmlFor="cardHolderName">Card Holder Name</label>
-                                                            <input type="text" className="form-control" data-bv-field="cardholdername" id="cardHolderName" required placeholder="Card Holder Name" name='card_holder_name' value={cardInfo.card_holder_name} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <div className="form-check">
-                                                                <input id="save-card" name="savecard" className="form-check-input" type="checkbox" />
-                                                                <label className="form-check-label" htmlFor="save-card">Save my card Details.</label>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-12 d-grid"> <button className="btn btn-primary" >Proceed to Pay</button> </div>
-                                                    </div>
-                                                </form>
-                                            </div>}
-                                            {activeTab === 'DebitCard' && <div className="tab-pane fade show active" id="DebitCard" role="tabpanel" aria-labelledby="first-tab">
-                                                <h3 className="text-5 mb-4">Enter Debit Card Details</h3>
-                                                <form id="payment" method="post" onSubmit={handlePayPaymentWithCard}>
-                                                    <div className="row g-3">
-                                                        <div className="col-12">
-                                                            <label className="form-label" htmlFor="card_number">Enter Credit Card Number</label>
-                                                            <input type="text" className="form-control" data-bv-field="card_number" id="card_number" name='card_number' required placeholder="Card Number" value={cardInfo.card_number} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <div>
-                                                                <label className="form-label" htmlFor="expiryMonth">Expiry Month</label>
-                                                                <select id="expiryMonth" className="form-select" required name='expiry_month' value={cardInfo.expiry_month} onChange={handleCardInfo}>
-                                                                    <option value="">Expiry Month</option>
-                                                                    <option value="1">January</option>
-                                                                    {
-                                                                        months && months.map((month, index) => (
-                                                                            <option key={index} value={month.id}>{month.name}</option>
-                                                                        ))
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <div>
-                                                                <label className="form-label" htmlFor="expiryYear">Expiry Year</label>
-                                                                <select id="expiryYear" className="form-select" required name='expiry_year' value={cardInfo.expiry_year} onChange={handleCardInfo}>
-                                                                    <option value="">Expiry Year</option>
-                                                                    {
-                                                                        years && years.map((year, index) => (
-                                                                            <option key={index}>{year}</option>
-                                                                        ))
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <label className="form-label" htmlFor="cvvNumber">CVV</label>
-                                                            <input type="text" className="form-control" data-bv-field="cvvnumber" id="cvvNumber" required placeholder="CVV Number" name='cvv' value={cardInfo.cvv} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <label className="form-label" htmlFor="cardHolderName">Card Holder Name</label>
-                                                            <input type="text" className="form-control" data-bv-field="cardholdername" id="cardHolderName" required placeholder="Card Holder Name" name='card_holder_name' value={cardInfo.card_holder_name} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <div className="form-check">
-                                                                <input id="save-card" name="savecard" className="form-check-input" type="checkbox" />
-                                                                <label className="form-check-label" htmlFor="save-card">Save my card Details.</label>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-12 d-grid"> <button className="btn btn-primary" >Proceed to Pay</button> </div>
-                                                    </div>
-                                                </form>
-                                            </div>}
-                                            {activeTab === 'PrepaidCard' && <div className="tab-pane fade show active" id="PrepaidCard" role="tabpanel" aria-labelledby="first-tab">
-                                                <h3 className="text-5 mb-4">Enter Prepaid Card Details</h3>
-                                                <form id="payment" method="post" onSubmit={handlePayPaymentWithCard}>
-                                                    <div className="row g-3">
-                                                        <div className="col-12">
-                                                            <label className="form-label" htmlFor="card_number">Enter Credit Card Number</label>
-                                                            <input type="text" className="form-control" data-bv-field="card_number" id="card_number" name='card_number' required placeholder="Card Number" value={cardInfo.card_number} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <div>
-                                                                <label className="form-label" htmlFor="expiryMonth">Expiry Month</label>
-                                                                <select id="expiryMonth" className="form-select" required name='expiry_month' value={cardInfo.expiry_month} onChange={handleCardInfo}>
-                                                                    <option value="">Expiry Month</option>
-                                                                    <option value="1">January</option>
-                                                                    {
-                                                                        months && months.map((month, index) => (
-                                                                            <option key={index} value={month.id}>{month.name}</option>
-                                                                        ))
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <div>
-                                                                <label className="form-label" htmlFor="expiryYear">Expiry Year</label>
-                                                                <select id="expiryYear" className="form-select" required name='expiry_year' value={cardInfo.expiry_year} onChange={handleCardInfo}>
-                                                                    <option value="">Expiry Year</option>
-                                                                    {
-                                                                        years && years.map((year, index) => (
-                                                                            <option key={index}>{year}</option>
-                                                                        ))
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-lg-4">
-                                                            <label className="form-label" htmlFor="cvvNumber">CVV</label>
-                                                            <input type="text" className="form-control" data-bv-field="cvvnumber" id="cvvNumber" required placeholder="CVV Number" name='cvv' value={cardInfo.cvv} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <label className="form-label" htmlFor="cardHolderName">Card Holder Name</label>
-                                                            <input type="text" className="form-control" data-bv-field="cardholdername" id="cardHolderName" required placeholder="Card Holder Name" name='card_holder_name' value={cardInfo.card_holder_name} onChange={handleCardInfo} />
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <div className="form-check">
-                                                                <input id="save-card" name="savecard" className="form-check-input" type="checkbox" />
-                                                                <label className="form-check-label" htmlFor="save-card">Save my card Details.</label>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-12 d-grid"> <button className="btn btn-primary">Proceed to Pay</button> </div>
-                                                    </div>
-                                                </form>
-                                            </div>}
-                                            {activeTab === 'UPI' && <div className="tab-pane fade show active" id="UPI" role="tabpanel" aria-labelledby="first-tab">
-                                                <h3 className="text-5 mb-4">Select Any UPI</h3>
-                                                <div className="row g-3">
-                                                    {
-                                                        upis && upis.map((upi: any, index: number) => (
-                                                            <div key={index} className="col-12">
-                                                                <div className="row">
-                                                                    <div className='col-2'>
-                                                                        <input type="radio" name='upi' onClick={() => handleUPIPayment(index)} />
-                                                                    </div>
-                                                                    <div className="col-2">
-                                                                        <div style={{ height: "60px", width: "60px" }}>
-                                                                            <img className="img-fluid" src={upi?.LogoPath} alt="Paypal Logo" title="Pay easily, fast and secure with PayPal." />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-8 text-left">
-                                                                        <span>{upi?.PaymentName}</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        ))
-                                                    }
-                                                </div>
-                                            </div>}
-                                            {activeTab === 'Wallet' && <div className="tab-pane fade show active" id="Wallet" role="tabpanel" aria-labelledby="first-tab">
-                                                <h3 className="text-5 mb-4">Pay payment any Wallet</h3>
-                                                <div className="row g-3">
-                                                    {
-                                                        wallets && wallets.map((wallet: any, index: number) => (
-                                                            <div key={index} className="col-12">
-                                                                <div className="row">
-                                                                    <div className="col-2">
-                                                                        <div style={{ height: "30px", width: "30px" }}>
-                                                                            <img className="img-fluid" src={wallet?.LogoPath} alt="Paypal Logo" title="Pay easily, fast and secure with PayPal." />
-
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-6 text-left">
-                                                                        <span>{wallet?.PaymentName}</span>
-                                                                    </div>
-                                                                    <div className="col-4">
-                                                                        <span><button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={() => handleWalletPayment(index)}>Pay</button></span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        ))
-                                                    }
-                                                </div>
-                                            </div>}
-
-                                        </div>
-                                    </div>
-                                    <div className="col-md-5 col-lg-5 order-0 order-md-1">
-                                        {(selectedPlan?.is_recharge == true) ? (
-                                            <div className="bg-light-2 rounded p-4 mb-4">
-                                                <h3 className="text-5 mb-4">Payable Amount</h3>
-                                                <ul className="list-unstyled">
-                                                    <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
-                                                    <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{selectedPlan?.amount}</span></li>
-                                                    {
-                                                        selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
-                                                    }
-                                                </ul>
-                                                <hr />
-                                                <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{selectedPlan?.total_pay_amount}</span></div>
-                                            </div>
-                                        ) : (
-                                            <div className="bg-light-2 rounded p-4 mb-4">
-                                                <h3 className="text-5 mb-4">Payable Amount</h3>
-                                                <ul className="list-unstyled">
-                                                    <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
-                                                    <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount}</span></li>
-                                                    <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount - billInformation?.amount}</span></li>
-                                                    {
-                                                        selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
-                                                    }
-                                                </ul>
-                                                <hr />
-                                                <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{(billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</span></div>
-                                            </div>
-                                        )}
-
-                                        <div className="bg-light-2 rounded p-4 d-none d-md-block">
-                                            <h3 className="text-5 mb-3">We value your Privacy.</h3>
-                                            <p className="mb-0">We will not sell or distribute your information. Read our <a href="#">Privacy Policy</a>.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
