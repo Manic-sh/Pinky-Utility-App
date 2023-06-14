@@ -1721,7 +1721,7 @@ html[dir="rtl"] .icon-inside {
 }
 
 .promo-code {
-  max-height: 150px;
+  max-height: 250px;
   padding-left: 30px;
   overflow-y: scroll;
 }
@@ -5014,4 +5014,16 @@ ui-widget-content .ui-state-active {
 }
 iframe{
   height: 500px;
+}
+
+.promo-code-apply-btn{
+  display: inline-block;
+    margin-bottom: 0.5rem;
+    border: 1px dashed #02CB66;
+    padding: 3px 10px;
+    color: #02CB66;
+    font-size: 12px;
+    float: right;
+    font-family: "Rubik-Medium";
+    cursor: pointer;
 }

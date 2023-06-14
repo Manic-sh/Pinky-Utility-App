@@ -10,24 +10,24 @@ interface selectedPlanI {
     total_pay_amount: any,
     txnid: String,
     amount: number,
-    planid:String,
-    biller_name:String,
-    plan_category_name:String,
-    validity:String,
-    circle_name:String,
-    plan_description:String,
-    billerid:number,
+    planid: String,
+    biller_name: String,
+    plan_category_name: String,
+    validity: String,
+    circle_name: String,
+    plan_description: String,
+    billerid: number,
 }
-interface billplanInformationIn{
-    ConnectionNumber:any,
-    biller_category:String,
-    biller_name:String,
-    validation_date:String,
-    valid_until:String,
-    amount:number,
-    billlist:any[],
-    billerid:any,
-    txnid:String
+interface billplanInformationIn {
+    ConnectionNumber: any,
+    biller_category: String,
+    biller_name: String,
+    validation_date: String,
+    valid_until: String,
+    amount: number,
+    billlist: any[],
+    billerid: any,
+    txnid: String
 }
 const Payment = () => {
     const [selectedPlan, setSelectedPlan] = useState<selectedPlanI>({
@@ -38,27 +38,27 @@ const Payment = () => {
         total_pay_amount: 0,
         txnid: "",
         amount: 0,
-        planid:"",
-        biller_name:'',
-        plan_category_name:'',
-        validity:'',
-        circle_name:'',
-        plan_description:'',
-        billerid:0,
-        
+        planid: "",
+        biller_name: '',
+        plan_category_name: '',
+        validity: '',
+        circle_name: '',
+        plan_description: '',
+        billerid: 0,
+
     });
     const [amount, setAmount] = useState<any>(0);
     const [paymentMethods, setPaymentMethods] = useState<any>([]);
     const [billInformation, setBillInformation] = useState<billplanInformationIn>({
-        ConnectionNumber:"",
-        biller_category:'',
-        biller_name:'',
-        validation_date:'',
-        valid_until:'',
-        amount:0,
-        billlist:[],
-        billerid:'',
-        txnid:""
+        ConnectionNumber: "",
+        biller_category: '',
+        biller_name: '',
+        validation_date: '',
+        valid_until: '',
+        amount: 0,
+        billlist: [],
+        billerid: '',
+        txnid: ""
     });
     const [isLoading, setIsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('');
@@ -89,9 +89,9 @@ const Payment = () => {
         // }
         const billplan_information = localStorage.getItem('billplan_information');
         if (billplan_information) {
-            const bill_info:any = JSON.parse(billplan_information);
-            console.log("bill_info===>",bill_info);
-           
+            const bill_info: any = JSON.parse(billplan_information);
+            console.log("bill_info===>", bill_info);
+
             setBillInformation(bill_info);
         }
     }, []);
@@ -110,7 +110,7 @@ const Payment = () => {
 
     }, [selectedPlan, billInformation]);
 
-    const handleCardInfo = (event:any) => {
+    const handleCardInfo = (event: any) => {
         const { name, value } = event.target;
         setCardInfo((prevProps) => ({
             ...prevProps,
@@ -118,9 +118,9 @@ const Payment = () => {
         }));
     };
 
-    async function getPaymentMethodList(billerid:number) {
+    async function getPaymentMethodList(billerid: number) {
         setIsLoading(true);
-        const paymentMethodList:any = await userService.getPaymentMethodList(billerid);
+        const paymentMethodList: any = await userService.getPaymentMethodList(billerid);
         setPaymentMethods(paymentMethodList);
         setActiveTab(paymentMethodList[0]?.Paymethod);
         setIsLoading(false);
@@ -141,9 +141,9 @@ const Payment = () => {
         { 'id': '11', name: "November" },
         { 'id': '12', name: "December" },
     ]
-    var years:any[] = Array.from(Array(2051 - new Date().getFullYear()), (_, i) => (i + new Date().getFullYear()).toString())
+    var years: any[] = Array.from(Array(2051 - new Date().getFullYear()), (_, i) => (i + new Date().getFullYear()).toString())
 
-    const handleTabClick = (index:number) => {
+    const handleTabClick = (index: number) => {
 
         setCardInfo({ card_number: '', expiry_month: '', expiry_year: '', cvv: '', card_holder_name: '' })
 
@@ -152,8 +152,8 @@ const Payment = () => {
         setWallets(paymentMethods[index]?.paymentValues)
     }
 
-    const handleWalletPayment = (index:number) => {
-        let wallet:any = wallets[index];
+    const handleWalletPayment = (index: number) => {
+        let wallet: any = wallets[index];
         let txnid = (selectedPlan?.txnid) ? selectedPlan?.txnid : (billInformation?.txnid);
         // const data = {
         //     txnid: txnid,
@@ -183,9 +183,9 @@ const Payment = () => {
         }
         payPaymentRequestwithWallets(data);
     }
-    const handleUPIPayment = (index:number) => {
+    const handleUPIPayment = (index: number) => {
         // let txnid = (selectedPlan?.txnid) ? selectedPlan?.txnid : (billInformation?.txnid);
-        let upi:any = upis[index];
+        let upi: any = upis[index];
         console.log("upi===>", upi);
         const data = {
             txnid: Math.random().toString(16).slice(2),
@@ -203,9 +203,9 @@ const Payment = () => {
         }
         payPaymentRequestwithUPI(data);
     }
-    async function payPaymentRequestwithWallets(data:any) {
+    async function payPaymentRequestwithWallets(data: any) {
         setIsLoading(true);
-        const paymentresponse:any = await PaymentService.payPaymentRequestwithWallets(data);
+        const paymentresponse: any = await PaymentService.payPaymentRequestwithWallets(data);
         setHtmlContent(paymentresponse);
         setShow(true);
         setIsLoading(false);
@@ -231,16 +231,16 @@ const Payment = () => {
         }
         payPaymentRequestWitCard(data);
     }
-    async function payPaymentRequestWitCard(data:any) {
+    async function payPaymentRequestWitCard(data: any) {
         setIsLoading(true);
-        const paymentresponse:any = await PaymentService.payPaymentWithCard(data);
+        const paymentresponse: any = await PaymentService.payPaymentWithCard(data);
         setHtmlContent(paymentresponse);
         setShow(true);
         setIsLoading(false);
     }
-    async function payPaymentRequestwithUPI(data:any) {
+    async function payPaymentRequestwithUPI(data: any) {
         setIsLoading(true);
-        const paymentresponse:any = await PaymentService.payPaymentRequestwithUPI(data);
+        const paymentresponse: any = await PaymentService.payPaymentRequestwithUPI(data);
         setHtmlContent(paymentresponse);
         setShow(true);
         setIsLoading(false);
@@ -255,6 +255,7 @@ const Payment = () => {
     return (
         <>
             <div id="content">
+
                 <div className="container">
                     <div className="row my-5">
                         <div className="col-lg-11 mx-auto">
@@ -289,13 +290,212 @@ const Payment = () => {
                         <div className="col-lg-12 text-center mt-5">
                             <h2 className="text-8">Select a Payment Mode</h2>
                         </div>
-                        <div className="col-lg-10 mx-auto mt-3">
+                        <div className='col-lg-12 mx-auto -mt-2'>
+                            <div className="bg-white shadow-md rounded">
+                                <div className="row align-items-center p-4">
+                                    <div className="col-md-6">
+                                        <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {selectedPlan?.total_pay_amount}</h2>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <p className="text-md-end pb-0 mb-0">Transaction ID: <span className="text-body">{txnid}</span></p>
+                                    </div>
+                                </div>
+                                <hr className="m-0" />
+                                <div className="p-4">
+                                    <h3 className="text-6 mb-4">How would you like to pay?</h3>
+                                    <div className="row">
+                                        <div className="col-md-4 col-lg-3">
+                                            <ul className="nav nav-tabs flex-column" id="myTab" role="tablist">
+                                                <li className="nav-item"> <a className="nav-link active" id="first-tab" data-bs-toggle="tab" href="#firstTab" role="tab" aria-controls="firstTab" aria-selected="true">Credit/Debit Cards</a> </li>
+                                                <li className="nav-item"> <a className="nav-link" id="second-tab" data-bs-toggle="tab" href="#secondTab" role="tab" aria-controls="secondTab" aria-selected="false">PayPal</a> </li>
+                                            </ul>
+                                        </div>
+                                        <div className="col-md-3 col-lg-5">
+                                            <div className="tab-content my-3" id="myTabContentVertical">
+                                                <div className="tab-pane fade show active" id="firstTab" role="tabpanel" aria-labelledby="first-tab">
+                                                    <div className="row">
+                                                        <div className="col-lg-12">
+                                                            <h3 className="text-5 mb-4">Enter Card Details</h3>
+                                                            <form id="payment" method="post">
+                                                                <div className="row g-3">
+                                                                    <div className="col-12">
+                                                                        <label className="form-label" htmlFor="cardNumber">Enter Debit / Credit Card Number</label>
+                                                                        <input type="text" className="form-control" data-bv-field="cardnumber" id="cardNumber" required placeholder="Card Number" />
+                                                                    </div>
+                                                                    <div className="col-lg-4">
+                                                                        <div>
+                                                                            <label className="form-label" htmlFor="expiryMonth">Expiry Month</label>
+                                                                            <select id="expiryMonth" className="form-select" >
+                                                                                <option value="">Expiry Month</option>
+                                                                                <option value="1">January</option>
+                                                                                <option value="2">February</option>
+                                                                                <option value="3">March</option>
+                                                                                <option value="1">April</option>
+                                                                                <option value="1">May</option>
+                                                                                <option value="1">June</option>
+                                                                                <option value="1">July</option>
+                                                                                <option value="1">August</option>
+                                                                                <option value="1">September</option>
+                                                                                <option value="1">October</option>
+                                                                                <option value="1">November</option>
+                                                                                <option value="1">December</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="col-lg-4">
+                                                                        <div>
+                                                                            <label className="form-label" htmlFor="expiryYear">Expiry Year</label>
+                                                                            <select id="expiryYear" className="form-select">
+                                                                                <option value="">Expiry Year</option>
+                                                                                <option>2018</option>
+                                                                                <option>2019</option>
+                                                                                <option>2020</option>
+                                                                                <option>2021</option>
+                                                                                <option>2022</option>
+                                                                                <option>2023</option>
+                                                                                <option>2024</option>
+                                                                                <option>2025</option>
+                                                                                <option>2026</option>
+                                                                                <option>2027</option>
+                                                                                <option>2028</option>
+                                                                                <option>2029</option>
+                                                                                <option>2030</option>
+                                                                                <option>2031</option>
+                                                                                <option>2032</option>
+                                                                                <option>2033</option>
+                                                                                <option>2034</option>
+                                                                                <option>2035</option>
+                                                                                <option>2036</option>
+                                                                                <option>2037</option>
+                                                                                <option>2038</option>
+                                                                                <option>2039</option>
+                                                                                <option>2040</option>
+                                                                                <option>2041</option>
+                                                                                <option>2042</option>
+                                                                                <option>2043</option>
+                                                                                <option>2044</option>
+                                                                                <option>2045</option>
+                                                                                <option>2046</option>
+                                                                                <option>2047</option>
+                                                                                <option>2048</option>
+                                                                                <option>2049</option>
+                                                                                <option>2050</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="col-lg-4">
+                                                                        <label className="form-label" htmlFor="cvvNumber">CVV</label>
+                                                                        <input type="text" className="form-control" data-bv-field="cvvnumber" id="cvvNumber" required placeholder="CVV Number" />
+                                                                    </div>
+                                                                    <div className="col-12">
+                                                                        <label className="form-label" htmlFor="cardHolderName">Card Holder Name</label>
+                                                                        <input type="text" className="form-control" data-bv-field="cardholdername" id="cardHolderName" required placeholder="Card Holder Name" />
+                                                                    </div>
+                                                                    <div className="col-12">
+                                                                        <div className="form-check">
+                                                                            <input id="save-card" name="savecard" className="form-check-input" type="checkbox" />
+                                                                            <label className="form-check-label" htmlFor="save-card">Save my card Details.</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="col-12 d-grid"> <a className="btn btn-primary" href="recharge-payment-success.html">Proceed to Pay</a> </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="tab-pane fade" id="secondTab" role="tabpanel" aria-labelledby="second-tab">
+                                                    <div className="row">
+                                                        <div className="col-md-12"> <img className="img-fluid" src="assets/images/paypal-logo.png" alt="Paypal Logo" title="Pay easily, fast and secure with PayPal." />
+                                                            <p className="lead">Pay easily, fast and secure with PayPal.</p>
+                                                            <p className="alert alert-info mb-4"><i className="fas fa-info-circle"></i> You will be redirected to PayPal to complete your payment securely.</p>
+                                                            <button className="btn btn-primary d-flex align-items-center" type="submit"><i className="fab fa-paypal fa-2x me-2"></i> Pay via PayPal</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-5 col-lg-4">
+                                            <div className='row'>
+                                            <div className='col-md-12 col-lg-12'>
+                                                    {(selectedPlan?.is_recharge == true) ? (
+                                                        <div className="bg-light-2 rounded p-4 mb-4">
+                                                            <h3 className="text-5 mb-4">Payable Amount</h3>
+                                                            <ul className="list-unstyled">
+                                                                <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
+                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{selectedPlan?.amount}</span></li>
+                                                                {
+                                                                    selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
+                                                                }
+                                                            </ul>
+                                                            <hr />
+                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{selectedPlan?.total_pay_amount}</span></div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="bg-light-2 rounded p-4 mb-4">
+                                                            <h3 className="text-5 mb-4">Payable Amount</h3>
+                                                            <ul className="list-unstyled">
+                                                                <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
+                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount}</span></li>
+                                                                <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount - billInformation?.amount}</span></li>
+                                                                {
+                                                                    selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
+                                                                }
+                                                            </ul>
+                                                            <hr />
+                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{(billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</span></div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className='col-md-12 col-lg-12'>
+                                                    {(selectedPlan?.is_recharge == true) ? (
+                                                        <div className="bg-light-2 rounded p-4 mb-4">
+                                                            <h3 className="text-5 mb-4">Payable Amount</h3>
+                                                            <ul className="list-unstyled">
+                                                                <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
+                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{selectedPlan?.amount}</span></li>
+                                                                {
+                                                                    selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
+                                                                }
+                                                            </ul>
+                                                            <hr />
+                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{selectedPlan?.total_pay_amount}</span></div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="bg-light-2 rounded p-4 mb-4">
+                                                            <h3 className="text-5 mb-4">Payable Amount</h3>
+                                                            <ul className="list-unstyled">
+                                                                <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
+                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount}</span></li>
+                                                                <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount - billInformation?.amount}</span></li>
+                                                                {
+                                                                    selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
+                                                                }
+                                                            </ul>
+                                                            <hr />
+                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{(billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</span></div>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="bg-light-2 rounded p-4 d-none d-md-block">
+                                                        <h3 className="text-5 mb-3">We value your Privacy.</h3>
+                                                        <p className="mb-0">We will not sell or distribute your information. Read our <a href="#">Privacy Policy</a>.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-lg-12 mx-auto mt-3">
+
                             <div className="bg-white shadow-sm rounded p-4 p-lg-5">
                                 <div className="row gx-5">
                                     <div className="col-md-7 col-lg-7 order-1 order-md-0">
                                         <ul className="nav nav-tabs mb-4 nav-fill" id="myTab" role="tablist">
                                             {
-                                                paymentMethods && paymentMethods.map((payment:any, index:number) => (
+                                                paymentMethods && paymentMethods.map((payment: any, index: number) => (
                                                     <li key={index} className="nav-item">
                                                         <button className={(payment.Paymethod == activeTab) ? 'nav-link text-4 lh-lg active' : 'nav-link text-4 lh-lg'} onClick={() => handleTabClick(index)}>{payment.Paymethod}</button>
                                                     </li>
@@ -468,7 +668,7 @@ const Payment = () => {
                                                 <h3 className="text-5 mb-4">Select Any UPI</h3>
                                                 <div className="row g-3">
                                                     {
-                                                        upis && upis.map((upi:any, index:number) => (
+                                                        upis && upis.map((upi: any, index: number) => (
                                                             <div key={index} className="col-12">
                                                                 <div className="row">
                                                                     <div className='col-2'>
@@ -492,7 +692,7 @@ const Payment = () => {
                                                 <h3 className="text-5 mb-4">Pay payment any Wallet</h3>
                                                 <div className="row g-3">
                                                     {
-                                                        wallets && wallets.map((wallet:any, index:number) => (
+                                                        wallets && wallets.map((wallet: any, index: number) => (
                                                             <div key={index} className="col-12">
                                                                 <div className="row">
                                                                     <div className="col-2">
@@ -562,16 +762,16 @@ const Payment = () => {
                     {/* <Modal.Title>Browse Plans</Modal.Title> */}
                 </Modal.Header>
                 <Modal.Body>
-               
+
                 </Modal.Body>
                 <iframe
-                        className="content"
-                        title="HTML Content"
-                        srcDoc={htmlContent}
-                    />
-                
+                    className="content"
+                    title="HTML Content"
+                    srcDoc={htmlContent}
+                />
+
                 {/* <div dangerouslySetInnerHTML={{ __html: htmlContent }} /> */}
-                
+
             </Modal>
             <a id="back-to-top" data-bs-toggle="tooltip" title="Back to Top" href="#"><i className="fa fa-chevron-up"></i></a>
         </>
