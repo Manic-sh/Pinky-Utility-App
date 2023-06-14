@@ -281,8 +281,14 @@ const Payment = () => {
                             <div className="bg-white shadow-md rounded">
                                 <div className="row align-items-center p-4">
                                     <div className="col-md-6">
-                                        <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {selectedPlan?.total_pay_amount}</h2>
-                                    </div>
+                                        {(selectedPlan?.is_recharge == true) ? (
+                                            <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {selectedPlan?.total_pay_amount}</h2>
+
+                                        ) : (
+                                            <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {(billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</h2>
+
+                                        )}
+                                       </div>
                                     <div className="col-md-6">
                                         <p className="text-md-end pb-0 mb-0">Transaction ID: <span className="text-body">{txnid}</span></p>
                                     </div>
@@ -300,7 +306,7 @@ const Payment = () => {
                                                         // <li key={index} className="nav-item">
                                                         //     <button className={(payment.Paymethod == activeTab) ? 'nav-link text-4 lh-lg active' : 'nav-link text-4 lh-lg'} onClick={() => handleTabClick(index)}>{payment.Paymethod}</button>
                                                         // </li>
-                                                        <li key={index} className="nav-item"> <a className={(payment.Paymethod == activeTab) ? 'nav-link text-4 lh-lg active' : 'nav-link text-4 lh-lg'}  id="second-tab" data-bs-toggle="tab" onClick={() => handleTabClick(index)} role="tab" aria-controls="secondTab" aria-selected="false">{payment.Paymethod}</a> </li>
+                                                        <li key={index} className="nav-item"> <a className={(payment.Paymethod == activeTab) ? 'nav-link text-4 lh-lg active' : 'nav-link text-4 lh-lg'} id="second-tab" data-bs-toggle="tab" onClick={() => handleTabClick(index)} role="tab" aria-controls="secondTab" aria-selected="false">{payment.Paymethod}</a> </li>
                                                     ))
                                                 }
                                             </ul>
@@ -524,30 +530,26 @@ const Payment = () => {
                                                 <div className='col-md-12 col-lg-12'>
                                                     {(selectedPlan?.is_recharge == true) ? (
                                                         <div className="bg-light-2 rounded p-4 mb-4">
-                                                            <h3 className="text-5 mb-4">Payable Amount</h3>
+                                                            <h3 className="text-5 mb-4">Fare Details</h3>
                                                             <ul className="list-unstyled">
-                                                                <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
-                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{selectedPlan?.amount}</span></li>
-                                                                {
-                                                                    selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
-                                                                }
+                                                                <li className="mb-2">Mobile Number: <span className="float-end text-4 fw-400 text-dark">{selectedPlan.number}</span></li>
+                                                                <li className="mb-2">Operator/Circle: <span className="float-end text-4 fw-300 text-dark operator-biller_name">{selectedPlan?.biller_name} | {selectedPlan?.circle_name}</span></li>
+                                                                <li className="mb-2">Plan: <span className="float-end text-4 fw-400 text-dark">{selectedPlan?.plan_category_name}</span></li>
+                                                                <li className="mb-2">Validity: <span className="float-end text-4 fw-400 text-dark">{selectedPlan?.validity}</span></li>
+
                                                             </ul>
-                                                            <hr />
-                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{selectedPlan?.total_pay_amount}</span></div>
                                                         </div>
                                                     ) : (
                                                         <div className="bg-light-2 rounded p-4 mb-4">
                                                             <h3 className="text-5 mb-4">Payable Amount</h3>
                                                             <ul className="list-unstyled">
-                                                                <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
-                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount}</span></li>
-                                                                <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount - billInformation?.amount}</span></li>
-                                                                {
-                                                                    selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
-                                                                }
+                                                                <li className="mb-2">Connection Number: <span className="float-end text-4 fw-400 text-dark">{billInformation?.ConnectionNumber}</span></li>
+                                                                <li className="mb-2">Category: <span className="float-end text-4 fw-400 text-dark">{billInformation?.biller_category}</span></li>
+                                                                <li className="mb-2">Operator: <span className="float-end text-4 fw-300 text-dark operator-bill">{billInformation?.biller_name}</span></li>
+                                                                <li className="mb-2">Validation Date: <span className="float-end text-4 fw-300 text-dark">{billInformation?.validation_date}</span></li>
+                                                                <li className="mb-2">Valid Until: <span className="float-end text-4 fw-300 text-dark">{billInformation?.valid_until}</span></li>
+
                                                             </ul>
-                                                            <hr />
-                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{(billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</span></div>
                                                         </div>
                                                     )}
                                                 </div>
@@ -593,7 +595,7 @@ const Payment = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
