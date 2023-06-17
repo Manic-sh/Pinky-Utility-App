@@ -650,7 +650,6 @@ const Home = () => {
                                                         </div>
                                                     )}
                                                 /> */}
-                                                kndksjnf
                                                 <Select
                                                     placeholder="Select Your Operator"
                                                     value={selectedOption}
