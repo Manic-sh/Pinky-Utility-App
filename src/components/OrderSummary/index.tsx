@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { userService } from "../Services";
 interface selectedPlanI {
     PayId: Number,
-    discount: Number,
+    discount: number,
     is_recharge: Boolean
     number: String,
     total_pay_amount: any,
@@ -100,7 +100,7 @@ const OrderSummary = () => {
         setSelectedPlan(selectedPlan);
         setDiscounAmount(0);
         localStorage.setItem('recharge_information', JSON.stringify(selectedPlan));
-        
+
         setCouponCode(couponCode);
 
         let discount = 0;
@@ -118,7 +118,7 @@ const OrderSummary = () => {
             discount = ApplyCodeResponse?.CouponDiscount;
             setDiscounAmount(discount);
             setIsDiscountApply(true);
-            if(selectedPlan.discount){
+            if (selectedPlan.discount) {
                 selectedPlan.total_pay_amount = selectedPlan.amount;
             }
             selectedPlan.total_pay_amount = (selectedPlan.total_pay_amount - discount).toFixed(2);
@@ -137,19 +137,19 @@ const OrderSummary = () => {
         color: 'red',
         cursor: 'pointer'
     }
-    const removeCouponCode = (couponCode:any) => {
-        console.log("removeCouponCode couponCode===>",couponCode);
-            setCouponCode('');
-            setCouponCodeError('');
-            setIsDiscountApply(false);
-            setPayAmount(0);
-            selectedPlan.total_pay_amount = selectedPlan.amount;
-            selectedPlan.discount = 0;
-            selectedPlan.couponCode = '';
-            setSelectedPlan(selectedPlan);
-            setDiscounAmount(0);
-            localStorage.setItem('recharge_information', JSON.stringify(selectedPlan));
-            
+    const removeCouponCode = (couponCode: any) => {
+        console.log("removeCouponCode couponCode===>", couponCode);
+        setCouponCode('');
+        setCouponCodeError('');
+        setIsDiscountApply(false);
+        setPayAmount(0);
+        selectedPlan.total_pay_amount = selectedPlan.amount;
+        selectedPlan.discount = 0;
+        selectedPlan.couponCode = '';
+        setSelectedPlan(selectedPlan);
+        setDiscounAmount(0);
+        localStorage.setItem('recharge_information', JSON.stringify(selectedPlan));
+
     }
     if (isLoading) {
         return <div id="preloader">
@@ -231,6 +231,26 @@ const OrderSummary = () => {
                                                 <p className="col-sm text-sm-end fw-500">{selectedPlan?.validity}</p>
                                             </div>
                                         </div>
+                                        {
+                                            (selectedPlan?.discount) ? (
+                                                <div className="row">
+                                                    <div className="col-6 col-lg-6 text-3">
+                                                        <p className="col-sm text-muted mb-0 mb-sm-3">Discount:</p>
+                                                    </div>
+                                                    <div className="col-6 col-lg-6 text-3">
+                                                        <p className="col-sm text-sm-end fw-500">{selectedPlan?.discount}</p>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="row">
+                                                    <div className="col-6 col-lg-6 text-3">
+                                                        <p className="col-sm text-muted mb-0 mb-sm-3">Discount:</p>
+                                                    </div>
+                                                    <div className="col-6 col-lg-6 text-3">
+                                                        <p className="col-sm text-sm-end fw-500">{selectedPlan?.discount}</p>
+                                                    </div>
+                                                </div>
+                                        )}
                                         <div className="row">
                                             <div className="col-6 col-lg-6 text-3">
                                                 <p className="col-sm text-muted mb-0 mb-sm-3">Amount:</p>
@@ -284,7 +304,7 @@ const OrderSummary = () => {
                                                         ) : (
                                                             <>
                                                                 <span onClick={() => { removeCouponCode(coupon.CouponCode) }} className="d-block text-3 fw-600">{coupon.CouponCode}
-                                                                    <span className='promo-code-apply-btn' style={{color:'red'}}>Remove</span>
+                                                                    <span className='promo-code-apply-btn' style={{ color: 'red' }}>Remove</span>
                                                                 </span>
                                                                 {coupon.Remarks}</>
                                                         )

@@ -99,7 +99,7 @@ const Payment = () => {
     useEffect(() => {
         if (selectedPlan?.billerid) {
             setTxnid(selectedPlan?.txnid);
-            setAmount(selectedPlan?.amount);
+            setAmount(selectedPlan?.total_pay_amount);
             getPaymentMethodList(selectedPlan?.billerid);
         }
         if (billInformation?.billerid) {
