@@ -5354,3 +5354,7 @@ iframe {
   font-family: "Rubik-Medium";
   cursor: pointer;
 }
+/* slecet box css */
+.css-13cymwt-control{
+  min-height: 50px !important;
+}

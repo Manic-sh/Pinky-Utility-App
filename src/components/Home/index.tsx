@@ -551,6 +551,12 @@ const Home = () => {
                                                                         value={selectedOption}
                                                                         options={subCategoryList}
                                                                         onChange={handleOperatorChange}
+                                                                        formatOptionLabel={(e: any) => (
+                                                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                                                <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
+                                                                                <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
+                                                                            </div>
+                                                                        )}
 
                                                                     />
                                                                 </div>
@@ -571,6 +577,12 @@ const Home = () => {
                                                                         value={selectedOption}
                                                                         options={subCategoryList}
                                                                         onChange={handleOperatorChange}
+                                                                        formatOptionLabel={(e: any) => (
+                                                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                                                <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
+                                                                                <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
+                                                                            </div>
+                                                                        )}
 
                                                                     />
                                                                     {errorBillerName && <span style={numErrorStyle}>{errorBillerName}</span>}
@@ -580,7 +592,7 @@ const Home = () => {
                                                                         <div className="mb-3">
                                                                             <input type="text" className="form-control" data-bv-field={billerParameter?.ConnectionNumber} required value={billerParameter?.ConnectionNumber} onChange={(event: any) => handleInputBillPaymentChange(index, event)}
                                                                                 placeholder={billerParameter?.ParameterName} name={billerParameter?.ConnectionNumber} />
-                                                                           </div>
+                                                                        </div>
                                                                     ))
                                                                 }
                                                                 {isPartialPay ? (<div className="mb-3">
@@ -626,17 +638,31 @@ const Home = () => {
                                                 {numberError && <span style={numErrorStyle}>{numberError}</span>}
                                             </div>
                                             <div className="mb-3">
+                                                {/* <Select
+                                                    placeholder="Select Your Operator"
+                                                    value={selectedOption}
+                                                    options={subCategoryList}
+                                                    onChange={handleOperatorChange}
+                                                    formatOptionLabel={(e: any) => (
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
+                                                            <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
+                                                        </div>
+                                                    )}
+                                                /> */}
+                                                kndksjnf
                                                 <Select
                                                     placeholder="Select Your Operator"
                                                     value={selectedOption}
                                                     options={subCategoryList}
                                                     onChange={handleOperatorChange}
-                                                // getOptionLabel={(e:null) => (
-                                                //     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                //         <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
-                                                //         <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
-                                                //     </div>
-                                                // )}
+                                                    formatOptionLabel={(e: any) => (
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
+                                                            <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
+                                                        </div>
+                                                    )}
+
                                                 />
                                                 {/* <SelectOperator subCategoryList={subCategoryList} billerid={billerid} plansInfo={plansInfo} handleOperatorChange={handleOperatorChange} /> */}
                                             </div>
@@ -652,11 +678,24 @@ const Home = () => {
                                     ) : (
                                         <form id="recharge-bill" method="post" onSubmit={handleBillPaymentSubmit}>
                                             <div className="mb-3">
+                                                {/* <Select
+                                                    placeholder="Select Your Operator"
+                                                    value={selectedOption}
+                                                    options={subCategoryList}
+                                                    onChange={handleOperatorChange}
+                                                /> */}
                                                 <Select
                                                     placeholder="Select Your Operator"
                                                     value={selectedOption}
                                                     options={subCategoryList}
                                                     onChange={handleOperatorChange}
+                                                    formatOptionLabel={(e: any) => (
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
+                                                            <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
+                                                        </div>
+                                                    )}
+
                                                 />
                                                 {errorBillerName && <span style={numErrorStyle}>{errorBillerName}</span>}
                                             </div>
@@ -769,11 +808,23 @@ const Home = () => {
                                     })}
                                 </select> */}
                                 {/* <SelectOperator subCategoryList={subCategoryList} billerid={billerid} plansInfo={plansInfo} handleOperatorChange={handleOperatorChange} /> */}
+                                {/* <Select
+                                    placeholder="Select Your Operator"
+                                    value={selectedOption}
+                                    options={subCategoryList}
+                                    onChange={handleOperatorChange}
+                                /> */}
                                 <Select
                                     placeholder="Select Your Operator"
                                     value={selectedOption}
                                     options={subCategoryList}
                                     onChange={handleOperatorChange}
+                                    formatOptionLabel={(e: any) => (
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <span><img height={45} width={45} src={e.BillerLogo} alt="" /></span>
+                                            <span style={{ marginLeft: 5 }}>{e.BillerName}</span>
+                                        </div>
+                                    )}
 
                                 />
                             </div>
