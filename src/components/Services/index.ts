@@ -8,6 +8,8 @@ const FetchBillPlan = 'FetchBillPlan';
 const DisplayCouponCode = "DisplayCouponCode";
 const ApplyCouponCode = "ApplyCouponCode";
 const getPaymentMethod = "GetPaymentMethod";
+const ApplyGiftCard = "ApplyGiftCard";
+const GetLoyaltyPoints = "GetLoyaltyPoints";
 const headers = { 'Content-Type': 'application/json' };
 export const userService = {
     getCategoriesList: async () => {
@@ -139,6 +141,32 @@ export const userService = {
             });
             const json = await response.json();
             return json?.paymethodoption;
+        } catch (error) {
+            console.error(error);
+        }
+    },
+    ApplyGiftCard: async (data:any) => {
+        try {
+            const response = await fetch(apiUrl + ApplyGiftCard, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data),
+            });
+            const json = await response.json();
+            return json;
+        } catch (error) {
+            console.error(error);
+        }
+    },
+    GetLoyaltyPoints: async (data:any) => {
+        try {
+            const response = await fetch(apiUrl + GetLoyaltyPoints, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data),
+            });
+            const json = await response.json();
+            return json;
         } catch (error) {
             console.error(error);
         }

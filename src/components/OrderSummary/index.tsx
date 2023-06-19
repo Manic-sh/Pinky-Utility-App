@@ -61,13 +61,15 @@ const OrderSummary = () => {
     });
     const [isLoading, setIsLoading] = useState(false);
     const [coupons, setCoupons] = useState([]);
+    const [loyaltyPoint, setLoyaltyPoint] = useState(0);
     useEffect(() => {
         const recharge_information: any = localStorage.getItem('recharge_information');
         if (recharge_information) {
             const recharge_info: any = JSON.parse(recharge_information);
             // recharge_info.total_pay_amount = recharge_info.amount;
             setPayAmount(recharge_info.amount);
-            setSelectedPlan(recharge_info)
+            setSelectedPlan(recharge_info);
+            getLoyaltyPoints(recharge_info.amount);
         }
         const billplan_information = localStorage.getItem('billplan_information');
         if (billplan_information) {
@@ -75,17 +77,37 @@ const OrderSummary = () => {
             setBillplanInformation(bill_info);
         }
         getCouponCodeList();
+        
     }, []);
 
     async function getCouponCodeList() {
         setIsLoading(true);
         const data = {
-            "Enquiryno": selectedPlan?.planid,
+            "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
             "Product": "UTILITY",
-            "Type": "Mobile Prepaid"
+            "Type": "Mobile Prepaid",
+            "CCNumber": ''
         }
         const cuponCodeList = await userService.DisplayCouponCode(data);
-        setCoupons(cuponCodeList.Coupons)
+        setCoupons(cuponCodeList.coupons)
+        setIsLoading(false);
+    }
+    async function getLoyaltyPoints(amount:any) {
+        setIsLoading(true);
+        // const data = {
+        //     "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
+        //     "Product": "UTILITY",
+        //     "Type": "Mobile Prepaid",
+        //     "CCNumber":''
+        // }
+        const data = {
+            "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
+            "Product": "UTILITY",
+            "Type": "Mobile Prepaid",
+            "Amount": amount
+        }
+        const point = await userService.GetLoyaltyPoints(data);
+        setLoyaltyPoint(point);
         setIsLoading(false);
     }
     const applyCouponCode = async (couponCode: any) => {
@@ -242,15 +264,8 @@ const OrderSummary = () => {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="row">
-                                                    <div className="col-6 col-lg-6 text-3">
-                                                        <p className="col-sm text-muted mb-0 mb-sm-3">Discount:</p>
-                                                    </div>
-                                                    <div className="col-6 col-lg-6 text-3">
-                                                        <p className="col-sm text-sm-end fw-500">{selectedPlan?.discount}</p>
-                                                    </div>
-                                                </div>
-                                        )}
+                                                <div className="row"></div>
+                                            )}
                                         <div className="row">
                                             <div className="col-6 col-lg-6 text-3">
                                                 <p className="col-sm text-muted mb-0 mb-sm-3">Amount:</p>
@@ -282,14 +297,36 @@ const OrderSummary = () => {
                                 </div>
                                 <aside className="col-md-4 col-lg-5 col-xl-4">
                                     <div className="bg-white shadow-md rounded p-3">
-                                        <h3 className="text-5 mb-3">Fare Details</h3>
+                                        <h3 className="text-5 mb-3">Plan Description:</h3>
                                         <hr className="mx-n3" />
                                         <ul className="list-unstyled">
-                                            <li className="mb-2"><span className=' text-4 fw-500 text-dark' > Plan Description:</span> <span className="float-end" style={{ textAlign: 'justify' }}>{selectedPlan?.plan_description}</span></li>
+                                            <li className="mb-2"><span className="float-end mb-2" style={{ textAlign: 'justify' }}>{selectedPlan?.plan_description}</span></li>
                                         </ul>
                                         <hr />
                                         <br />
-                                        <h3 className="text-4 mb-3 mt-4">Promo Code</h3>
+                                        <hr />
+                                        {
+                                            (loyaltyPoint > 0) ? (
+                                                <>
+                                                    <h3 className="text-5 mb-3 mt-2">Loyalty points earned:</h3>
+                                                    <div className="row">
+                                                        <div className="col-6 col-lg-6 text-3">
+                                                            <p className="col-sm text-muted mb-0 mb-sm-3">Points:</p>
+                                                        </div>
+                                                        <div className="col-6 col-lg-6 text-3">
+                                                            <p className="col-sm text-sm-end fw-500">{loyaltyPoint}</p>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </>
+                                            ):(
+                                                <>
+                                                </>
+                                            )
+                                        }
+
+                                        
+                                        <h3 className="text-4 mb-3">Promo Code:</h3>
 
                                         <ul className="promo-code">
                                             {coupons && coupons.map((coupon: any, index: number) => (
@@ -297,14 +334,15 @@ const OrderSummary = () => {
                                                     {
                                                         (selectedPlan.couponCode != coupon.CouponCode) ? (
                                                             <>
-                                                                <span onClick={() => { applyCouponCode(coupon.CouponCode) }} className="d-block text-3 fw-600">{coupon.CouponCode}
-                                                                    <span className='promo-code-apply-btn'>Apply </span>
+                                                                <span className="d-block text-3 fw-600">{coupon.CouponCode}
+                                                                    <span
+                                                                        onClick={() => { applyCouponCode(coupon.CouponCode) }} className='promo-code-apply-btn'>Apply </span>
                                                                 </span>
                                                                 {coupon.Remarks}</>
                                                         ) : (
                                                             <>
-                                                                <span onClick={() => { removeCouponCode(coupon.CouponCode) }} className="d-block text-3 fw-600">{coupon.CouponCode}
-                                                                    <span className='promo-code-apply-btn' style={{ color: 'red' }}>Remove</span>
+                                                                <span className="d-block text-3 fw-600">{coupon.CouponCode}
+                                                                    <span onClick={() => { removeCouponCode(coupon.CouponCode) }} className='promo-code-apply-btn' style={{ color: 'red' }}>Remove</span>
                                                                 </span>
                                                                 {coupon.Remarks}</>
                                                         )
@@ -314,7 +352,20 @@ const OrderSummary = () => {
                                             ))}
                                         </ul>
                                     </div>
+                                    {/* <div className="bg-white shadow-md rounded p-3 mt-2">
+                                        <h3 className="text-5 mb-3">Earn Extra Point:</h3>
+                                        <hr className="mx-n3" />
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <span>Points:</span>
+                                            </div>
+                                            <div className="col-md-6 text-right">
+                                                10
+                                            </div>
+                                        </div>
+                                    </div> */}
                                 </aside>
+
                             </>
 
                         ) : (

@@ -29,6 +29,12 @@ interface billplanInformationIn {
     billerid: any,
     txnid: String
 }
+interface giftCardFormIn{
+    EnquiryNo:number,
+    CardNo:string,
+    PinNum:string,
+    Amount:number
+}
 const Payment = () => {
     const [selectedPlan, setSelectedPlan] = useState<selectedPlanI>({
         PayId: 0,
@@ -60,6 +66,14 @@ const Payment = () => {
         billerid: '',
         txnid: ""
     });
+    
+    const [giftCardForm, setGiftCardForm] = useState<giftCardFormIn>({
+        EnquiryNo:Math.floor(Math.random() * 1000) + 1000,
+        CardNo:"",
+        PinNum:"",
+        Amount:0
+    });
+    const [giftCardResponse, setGiftCardResponse] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('');
     const [upis, setUPI] = useState([]);
@@ -233,6 +247,31 @@ const Payment = () => {
         setIsLoading(false);
     }
     const handleClose = () => setShow(false);
+
+    //handle on change gift Card Form
+    const handleGiftCardForm = (event: any) => {
+        setGiftCardForm((prevProps) => ({...prevProps, Amount: amount}));
+        const { name, value } = event.target;
+        setGiftCardForm((prevProps) => ({
+            ...prevProps,
+            [name]: value
+        }));
+    };
+    // handle on submit gift card form
+    const handlePayPaymentWitGiftCard = (event:any) => {
+        event.preventDefault();
+        
+        payApplyGiftCard(giftCardForm);
+        console.log("giftCardForm===>",giftCardForm);
+    }
+    async function payApplyGiftCard(data: any) {
+        setIsLoading(true);
+        const giftresponse: any = await userService.ApplyGiftCard(data);
+        setGiftCardResponse(giftresponse);
+        console.log("giftresponse====>",giftresponse);
+        console.log("giftCardResponse===>",giftCardResponse);
+        setIsLoading(false);
+    }
 
     if (isLoading) {
         return <div id="preloader">
@@ -522,7 +561,29 @@ const Payment = () => {
                                                         }
                                                     </div>
                                                 </div>}
-
+                                                {activeTab === 'GiftCard' && <div className="tab-pane fade show active" id="CreditCard" role="tabpanel" aria-labelledby="first-tab">
+                                                    <h3 className="text-5 mb-4">Enter Gift Card Detail</h3>
+                                                    <form id="payment" method="post" onSubmit={handlePayPaymentWitGiftCard}>
+                                                        <div className="row g-3">
+                                                            <div className="col-12">
+                                                                <label className="form-label" htmlFor="CardNo">Card Number</label>
+                                                                <input type="text" className="form-control" data-bv-field="CardNo" id="CardNo" name='CardNo' required placeholder="Card Number" value={giftCardForm.CardNo} onChange={handleGiftCardForm} />
+                                                            </div>
+                                                            <div className="col-12">
+                                                                <label className="form-label" htmlFor="pin_number">Pin Number</label>
+                                                                <input type="text" className="form-control" data-bv-field="pin_number" id="pin_number" name='PinNum' required placeholder="Pin Number" value={giftCardForm.PinNum} onChange={handleGiftCardForm} />
+                                                            </div>
+                                                            <div className='col-12'>
+                                                                {
+                                                                    giftCardResponse && <>
+                                                                        <span>{giftCardResponse?.Message}</span>
+                                                                    </>
+                                                                }
+                                                            </div>
+                                                            <div className="col-12 d-grid"> <button className="btn btn-primary" >Proceed to Pay</button> </div>
+                                                        </div>
+                                                    </form>
+                                                </div>}
                                             </div>
                                         </div>
                                         <div className="col-md-5 col-lg-4">

@@ -1,13 +1,13 @@
+import React from "react";
 import { Link } from "react-router-dom";
-
 const Header = () => {
     return (
         <header id="header">
             <div className="container">
                 <div className="header-row">
                     <div className="header-column justify-content-start">
-                        <div className="logo me-2 me-lg-3"> <Link to='/' className="d-flex" title="HTML Template"><img
-                            src="assets/images/logo.png" alt="Quickai" /></Link> </div>
+                        <div className="logo me-2 me-lg-3"> <Link to='/' className="d-flex" title="Pinki Tours & Travels"><img
+                            src="assets/images/pinki-logo.jpg" alt="Pinki Tours & Travels" style={{width:'15%'}} /></Link> </div>
                     </div>
                     <div className="header-column justify-content-end">
 
