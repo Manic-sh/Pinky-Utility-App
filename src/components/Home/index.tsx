@@ -362,6 +362,11 @@ const Home = () => {
     };
 
     const handleClick1 = (index: number) => () => {
+        setSubCategory({
+            billerParameters: [],
+            billerid: 0,
+            ErrorMsg: '',
+        })
         setErrorBillerName('');
         setConnectionNumberError('');
         setRechargeForm({ type: '', number: '', operator_info: '' })
