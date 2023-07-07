@@ -40,6 +40,13 @@ interface plansInfoIn {
     circle: any;
 }
 const Home = () => {
+    const [state, setState] = useState<any>({
+        selectedCategory: null,
+        selectedSubCategory: null,
+        selectedPlan: null,
+        billInformation:null,
+        isLoading: true,
+    })
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [subCategoryList, setSubCategoryList] = useState([]);
@@ -100,6 +107,10 @@ const Home = () => {
     }, []);
     useEffect(() => {
         setCurrentCategory(currentCategory);
+        setState((prev: any) => ({
+            ...prev,
+            selectedCategory: currentCategory
+        }));
         if (currentCategory?.PayID) {
             console.log("currentCategory?.PayID===>", currentCategory)
             GetSubCategory(currentCategory.PayID);
@@ -128,6 +139,10 @@ const Home = () => {
         }
         setAddMoreOptions(addMoreBtn);
         setCurrentCategory(categorylists[0]);
+        setState((prev: any) => ({
+            ...prev,
+            selectedCategory: categorylists[0]
+        }));
         setCategories(categorylists);
         setIsLoading(false);
     }
@@ -163,42 +178,10 @@ const Home = () => {
             if (result.length > 0) {
                 setSelectedOption(result[0]);
             }
-            console.log("resultresultresult===>", result);
         }
         setBillerid(operatorDetails?.billerid);
-        // setCircleName(operatorDetails.circle_name);
         setPlansInfo(plansInfo);
-        // setIsLoading(false);
     }
-
-    // const pageName = location.pathname;
-    // const currentPage = pageName.replace('/', '');
-
-    // let isNumberTrue = true;
-    // if (categories.length > 0) {
-    //     let catData = categories.filter((cat) => cat.slug === currentPage.replace('/', ''));
-
-    //     // console.log("currentCategory====>", catData[0]);
-    //     let currentCategory = catData[0];
-    //     console.log("catData[0]====>", catData[0]);
-    //     let mobile = catData[0].slug.indexOf("mobile");
-    //     if (mobile >= 0) {
-    //         // setNumberType(true);
-    //         isNumberTrue = true;
-    //     } else {
-    //         // setNumberType(false)
-    //         isNumberTrue = false;
-    //     }
-
-    //     // setCurrentCategory(catData[0]);
-    //     // GetSubCategory(currentCategory.PayID);
-    //     // console.log("pageName=>", currentPage);
-
-    //     titel = currentCategory.Payheading;
-    //     offers = currentCategory.offers;
-    //     playholder = currentCategory.DefaultMessage;
-    //     // console.log("offers====>",offers);
-    // }
     const [rechargeForm, setRechargeForm] = useState({
         type: "",
         number: "",
@@ -227,6 +210,7 @@ const Home = () => {
         }));
     };
     const handleSubmit = (event: any) => {
+        console.log("state===>", state);
         event.preventDefault();
 
         selectedPlan.number = rechargeForm.number;
@@ -249,9 +233,11 @@ const Home = () => {
         var txnid = Math.random().toString(16).slice(2);
         selectedPlan.txnid = txnid;
         const recharge_information = JSON.stringify(selectedPlan);
-
-        localStorage.removeItem('billplan_information');
-        localStorage.setItem('recharge_information', recharge_information);
+        console.log("recharge_information===>", recharge_information);
+        console.log("state===>", state);
+        // localStorage.removeItem('billplan_information');
+        // localStorage.setItem('recharge_information', recharge_information);
+        localStorage.setItem('state', JSON.stringify(state));
         history.push('/pay/order-summary');
     };
     const handleBillPaymentSubmit = async (event: any) => {
@@ -293,6 +279,11 @@ const Home = () => {
         setIsLoading(true);
         const fetchBillPlanData = await userService.fetchBillPlanList(data);
         if (fetchBillPlanData?.validationid) {
+            setState((prev: any) => ({
+                ...prev,
+                selectedPlan:null,
+                billInformation: fetchBillPlanData,
+            }));
             setBilIInformation(fetchBillPlanData);
             setChargeableAmount(fetchBillPlanData?.billlist[0]?.billamount);
             // setBillPayForm({ amount: fetchBillPlanData?.billlist[0]?.billamount });
@@ -309,20 +300,15 @@ const Home = () => {
         }
         setIsLoading(false);
     }
-    const payBillPayment = (event: any) => {
+    const payBillPayment = (event: any) => {//
         event.preventDefault();
         setErrorBillerName('');
         console.log("billPayForm===>", billPayForm);
-        // if (!billPayForm.billerInfo) {
-        //     setErrorBillerName("Please select any one operator!");
-        //     return false;
-        // }
-
+       
         if (billInformation?.validationid) {
 
             setBilIInformation(billInformation);
-
-            localStorage.removeItem('recharge_information');
+            
             billInformation.ConnectionNumber = subCategory.billerParameters[0]?.ConnectionNumber;//billPayForm.ConnectionNumber;
             billInformation.amount = chargeableAmount;
             // var txnid = (new Date()).getTime()+ Math.random().toString(16).slice(2);
@@ -330,8 +316,17 @@ const Home = () => {
             billInformation.txnid = txnid;
             billInformation.is_recharge = true;
             // setBillPayForm({ amount: billInformation?.billlist[0]?.billamount,  });
-            const billplan_information = JSON.stringify(billInformation);
-            localStorage.setItem('billplan_information', billplan_information);
+
+            setState((prev: any) => ({
+                ...prev,
+                selectedPlan:null,
+                billInformation: billInformation,
+            }));
+            console.log("billInformation===>",billInformation);
+            console.log("first=============>",state);
+            // const billplan_information = JSON.stringify(billInformation);
+            localStorage.setItem('state', JSON.stringify(state));
+            // localStorage.setItem('billplan_information', billplan_information);
 
             // localStorage.setItem('is_recharge', billInformation.is_recharge);
             history.push('/pay/order-summary');
@@ -343,6 +338,10 @@ const Home = () => {
         setConnectionNumberError('');
         setRechargeForm({ type: '', number: '', operator_info: '' })
         let category: any = categories[index];
+        setState((prev: any) => ({
+            ...prev,
+            selectedCategory: category
+        }));
         history.push(category.slug);
         setCurrentCategory(category);
         setSubCategory({
@@ -373,7 +372,10 @@ const Home = () => {
         let category: any = categories[index];
         history.push(category.slug);
         setCurrentCategory(category);
-        // setSubCategory(null);
+        setState((prev: any) => ({
+            ...prev,
+            selectedCategory: category
+        }));
         GetSubCategory(category.PayID);
         setErrorBillerName("")
         setBillPayForm({
@@ -382,7 +384,6 @@ const Home = () => {
             // amount: 0,
         })
         setChargeableAmount(0);
-
     };
 
     async function GetCircle(billerid: Number) {
@@ -390,8 +391,6 @@ const Home = () => {
         const circleinformation = await userService.getGetCircleList(billerid);
         (circleinformation) ? setCircleList(circleinformation) : setCircleList([]);
         setIsLoading(false);
-        // setShow(true);
-
     }
     async function FetchPrepaidPlan(billerid: Number, circleName: String) {
         setIsLoading(true);
@@ -423,9 +422,10 @@ const Home = () => {
 
     const [selectedOption, setSelectedOption] = useState(null);
     const handleOperatorChange = (e: any) => {
+        setState((prev: any) => ({ ...prev, selectedSubCategory: e }));
         setSelectedOption(e);
         setErrorBillerName("");
-        let currentSubCategory = e;//subCategoryList[e.target.value];
+        let currentSubCategory = e;
         setBillPayForm({
             billerInfo: currentSubCategory,
             ConnectionNumber: "",
@@ -464,7 +464,12 @@ const Home = () => {
     const handleRechargeClick = (index: number) => {
         let selectedplan = allplans[index];
         setSelectedPlan(selectedplan);
+        setState((prev: any) => ({
+            ...prev,
+            selectedPlan: selectedplan
+        }));
         setShow(false);
+        console.log("state===>", state);
     }
     const [isPartialPay, setIsPartialPay] = useState(true);
 
@@ -737,8 +742,8 @@ const Home = () => {
                             </div>
                         </div>
                     </section>
-                    <div className="section pt-4 pb-3">
-                        <div className="container">
+                    <div className="section pt-4 pb-3 ">
+                        <div className="container shadow-md">
                             <ul className="nav nav-tabs" id="myTab" role="tablist">
                                 <li className="nav-item"> <a className="nav-link active" id="mobile-recharge-tab" data-bs-toggle="tab"
                                     href="#mobile-recharge" role="tab" aria-controls="mobile-recharge" aria-selected="true">Mobile

@@ -53,6 +53,11 @@ const Payment = () => {
         billerid: 0,
 
     });
+    const [state, setState] = useState<any>({
+        selectedCategory: null,
+        selectedPlan: null,
+        isLoading: true,
+    })
     const [amount, setAmount] = useState<any>(0);
     const [paymentMethods, setPaymentMethods] = useState<any>([]);
     const [billInformation, setBillInformation] = useState<billplanInformationIn>({
@@ -89,32 +94,43 @@ const Payment = () => {
     const surl = window.location.origin + "/#/pay/payment-cancel";
 
     useEffect(() => {
-        const recharge_information = localStorage.getItem('recharge_information');
-        if (recharge_information) {
-            let recharge_info = JSON.parse(recharge_information);
-            setSelectedPlan(recharge_info);
-
-        }
+        // const recharge_information = localStorage.getItem('recharge_information');
+        // if (recharge_information) {
+        //     let recharge_info = JSON.parse(recharge_information);
+        //     setSelectedPlan(recharge_info);
+        // }
         // const billplan_information = localStorage.getItem('billplan_information');
         // if (billplan_information) {
         //     setBillInformation(JSON.parse(billplan_information));
         //     console.log("billInformation==>",billInformation);
         //     console.log("first")
         // }
-        const billplan_information = localStorage.getItem('billplan_information');
-        if (billplan_information) {
-            const bill_info: any = JSON.parse(billplan_information);
-            console.log("bill_info===>", bill_info);
-
-            setBillInformation(bill_info);
+        // const billplan_information = localStorage.getItem('billplan_information');
+        // if (billplan_information) {
+        //     const bill_info: any = JSON.parse(billplan_information);
+        //     console.log("bill_info===>", bill_info);
+        //     setBillInformation(bill_info);
+        // }
+        const state1: any = localStorage.getItem('state');
+        console.log("statestatestatestatestate", state1)
+        if (state1) {
+            const stateInfo = JSON.parse(state1);
+            console.log("stateInfo====>", stateInfo.selectedCategory);
+            setState((prev: any) => ({
+                ...prev,
+                loyaltyPoint: 0,
+                selectedCategory: stateInfo?.selectedCategory,
+                isLoading: false,
+                selectedPlan: stateInfo?.selectedPlan
+            }));
         }
     }, []);
 
     useEffect(() => {
-        if (selectedPlan?.billerid) {
-            setTxnid(selectedPlan?.txnid);
-            setAmount(selectedPlan?.total_pay_amount);
-            getPaymentMethodList(selectedPlan?.billerid);
+        if (state.selectedPlan?.billerid) {
+            setTxnid(state.selectedPlan?.txnid);
+            setAmount(state.selectedPlan?.total_pay_amount);
+            getPaymentMethodList(state.selectedPlan?.billerid);
         }
         if (billInformation?.billerid) {
             setTxnid(billInformation?.txnid);
@@ -122,7 +138,7 @@ const Payment = () => {
             getPaymentMethodList(billInformation?.billerid);
         }
 
-    }, [selectedPlan, billInformation]);
+    }, [state.selectedPlan, billInformation]);
 
     const handleCardInfo = (event: any) => {
         const { name, value } = event.target;
@@ -272,7 +288,7 @@ const Payment = () => {
         console.log("giftCardResponse===>",giftCardResponse);
         setIsLoading(false);
     }
-
+    console.log("state===>",state)
     if (isLoading) {
         return <div id="preloader">
             <div data-loader="dual-ring"></div>
@@ -320,8 +336,8 @@ const Payment = () => {
                             <div className="bg-white shadow-md rounded">
                                 <div className="row align-items-center p-4">
                                     <div className="col-md-6">
-                                        {(selectedPlan?.is_recharge == true) ? (
-                                            <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {selectedPlan?.total_pay_amount}</h2>
+                                        {(state.selectedPlan?.is_recharge == true) ? (
+                                            <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {state.selectedPlan?.total_pay_amount}</h2>
 
                                         ) : (
                                             <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {(billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</h2>
@@ -589,14 +605,14 @@ const Payment = () => {
                                         <div className="col-md-5 col-lg-4">
                                             <div className='row'>
                                                 <div className='col-md-12 col-lg-12'>
-                                                    {(selectedPlan?.is_recharge == true) ? (
+                                                    {(state.selectedPlan?.is_recharge == true) ? (
                                                         <div className="bg-light-2 rounded p-4 mb-4">
                                                             <h3 className="text-5 mb-4">Fare Details</h3>
                                                             <ul className="list-unstyled">
-                                                                <li className="mb-2">Mobile Number: <span className="float-end text-4 fw-400 text-dark">{selectedPlan.number}</span></li>
-                                                                <li className="mb-2">Operator/Circle: <span className="float-end text-4 fw-300 text-dark operator-biller_name">{selectedPlan?.biller_name} | {selectedPlan?.circle_name}</span></li>
-                                                                <li className="mb-2">Plan: <span className="float-end text-4 fw-400 text-dark">{selectedPlan?.plan_category_name}</span></li>
-                                                                <li className="mb-2">Validity: <span className="float-end text-4 fw-400 text-dark">{selectedPlan?.validity}</span></li>
+                                                                <li className="mb-2">Mobile Number: <span className="float-end text-4 fw-400 text-dark">{state.selectedPlan.number}</span></li>
+                                                                <li className="mb-2">Operator/Circle: <span className="float-end text-4 fw-300 text-dark operator-biller_name">{state.selectedPlan?.biller_name} | {state.selectedPlan?.circle_name}</span></li>
+                                                                <li className="mb-2">Plan: <span className="float-end text-4 fw-400 text-dark">{state.selectedPlan?.plan_category_name}</span></li>
+                                                                <li className="mb-2">Validity: <span className="float-end text-4 fw-400 text-dark">{state.selectedPlan?.validity}</span></li>
 
                                                             </ul>
                                                         </div>
@@ -615,18 +631,18 @@ const Payment = () => {
                                                     )}
                                                 </div>
                                                 <div className='col-md-12 col-lg-12'>
-                                                    {(selectedPlan?.is_recharge == true) ? (
+                                                    {(state.selectedPlan?.is_recharge == true) ? (
                                                         <div className="bg-light-2 rounded p-4 mb-4">
                                                             <h3 className="text-5 mb-4">Payable Amount</h3>
                                                             <ul className="list-unstyled">
                                                                 <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
-                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{selectedPlan?.amount}</span></li>
+                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{state.selectedPlan?.amount}</span></li>
                                                                 {
-                                                                    selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
+                                                                    state.selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({state.selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{state.selectedPlan?.discount}</span></li>) : (<span></span>)
                                                                 }
                                                             </ul>
                                                             <hr />
-                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{selectedPlan?.total_pay_amount}</span></div>
+                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{state.selectedPlan?.total_pay_amount}</span></div>
                                                         </div>
                                                     ) : (
                                                         <div className="bg-light-2 rounded p-4 mb-4">
@@ -636,7 +652,7 @@ const Payment = () => {
                                                                 <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount}</span></li>
                                                                 <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount - billInformation?.amount}</span></li>
                                                                 {
-                                                                    selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
+                                                                    state.selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({state.selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
                                                                 }
                                                             </ul>
                                                             <hr />

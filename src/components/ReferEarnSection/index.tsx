@@ -4,7 +4,7 @@ const ReferEarnSection = () => {
             <section className="section bg-white shadow-md rounded px-5">
                 <h2 className="text-9 fw-600 text-center">Refer & Earn</h2>
                 <p className="lead text-center mb-5">Refer your friends and earn up to $20.</p>
-                <div className="row">
+                <div className="row shadow-md">
                     <div className="col-md-4">
                         <div className="featured-box style-4">
                             <div className="featured-box-icon bg-light-4 text-primary rounded-circle"> <i className="fas fa-bullhorn"></i>

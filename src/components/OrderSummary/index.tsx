@@ -62,26 +62,51 @@ const OrderSummary = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [coupons, setCoupons] = useState([]);
     const [loyaltyPoint, setLoyaltyPoint] = useState(0);
-    useEffect(() => {
-        const recharge_information: any = localStorage.getItem('recharge_information');
-        if (recharge_information) {
-            const recharge_info: any = JSON.parse(recharge_information);
-            // recharge_info.total_pay_amount = recharge_info.amount;
-            setPayAmount(recharge_info.amount);
-            setSelectedPlan(recharge_info);
-            getLoyaltyPoints(recharge_info.amount);
-        }
-        const billplan_information = localStorage.getItem('billplan_information');
-        if (billplan_information) {
-            const bill_info = JSON.parse(billplan_information);
-            setBillplanInformation(bill_info);
-        }
-        getCouponCodeList();
-        
-    }, []);
 
+    const [state, setState] = useState<any>({
+        selectedCategory: null,
+        selectedPlan: null,
+        isLoading: true,
+        billInformation:null
+    })
+
+    useEffect(() => {
+        // const recharge_information: any = localStorage.getItem('recharge_information');
+        // if (recharge_information) {
+        //     const recharge_info: any = JSON.parse(recharge_information);
+        //     // recharge_info.total_pay_amount = recharge_info.amount;
+        //     setPayAmount(recharge_info.amount);
+        //     setSelectedPlan(recharge_info);
+        //     getLoyaltyPoints(recharge_info.amount);
+        // }
+        // const billplan_information = localStorage.getItem('billplan_information');
+        // if (billplan_information) {
+        //     const bill_info = JSON.parse(billplan_information);
+        //     setBillplanInformation(bill_info);
+        // }
+        const state1: any = localStorage.getItem('state');
+        console.log("statestatestatestatestate", state1)
+        if (state1) {
+            const stateInfo = JSON.parse(state1);
+            console.log("stateInfo====>", stateInfo.selectedCategory);
+            getLoyaltyPoints(stateInfo.selectedPlan?.amount);
+            setState((prev: any) => ({
+                ...prev,
+                loyaltyPoint: 0,
+                selectedCategory: stateInfo?.selectedCategory,
+                isLoading: false,
+                selectedPlan: stateInfo?.selectedPlan,
+                billInformation: stateInfo?.billInformation
+            }));
+        }
+        console.log("state===>", state);
+
+        getCouponCodeList();
+
+    }, []);
+    console.log("state this is===>", state);
     async function getCouponCodeList() {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev,isLoading: true}));
         const data = {
             "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
             "Product": "UTILITY",
@@ -90,16 +115,10 @@ const OrderSummary = () => {
         }
         const cuponCodeList = await userService.DisplayCouponCode(data);
         setCoupons(cuponCodeList.coupons)
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev,isLoading: false}));
     }
-    async function getLoyaltyPoints(amount:any) {
+    async function getLoyaltyPoints(amount: any) {
         setIsLoading(true);
-        // const data = {
-        //     "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
-        //     "Product": "UTILITY",
-        //     "Type": "Mobile Prepaid",
-        //     "CCNumber":''
-        // }
         const data = {
             "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
             "Product": "UTILITY",
@@ -107,6 +126,7 @@ const OrderSummary = () => {
             "Amount": amount
         }
         const point = await userService.GetLoyaltyPoints(data);
+        setState((prev: any) => ({ ...prev, loyaltyPoint: point }));
         setLoyaltyPoint(point);
         setIsLoading(false);
     }
@@ -116,12 +136,15 @@ const OrderSummary = () => {
         setCouponCodeError('');
         setIsDiscountApply(false);
         setPayAmount(0);
-        selectedPlan.total_pay_amount = selectedPlan.amount;
-        selectedPlan.discount = 0;
-        selectedPlan.couponCode = '';
-        setSelectedPlan(selectedPlan);
+        state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
+        state.selectedPlan.discount = 0;
+        state.selectedPlan.couponCode = '';
+        setState((prev: any) => ({ ...prev,
+            selectedPlan:state.selectedPlan
+        }));
+        setSelectedPlan(state.selectedPlan);
         setDiscounAmount(0);
-        localStorage.setItem('recharge_information', JSON.stringify(selectedPlan));
+        localStorage.setItem('state', JSON.stringify(state.selectedPlan));
 
         setCouponCode(couponCode);
 
@@ -130,7 +153,7 @@ const OrderSummary = () => {
             Enquiryno: selectedPlan.planid,
             Product: "Utility",
             Type: "Mobile Prepaid",
-            Amount: selectedPlan.amount,
+            Amount: selectedPlan?.amount,
             CouponCode: couponCode
         }
         const ApplyCodeResponse = await userService.ApplyCouponCode(data);
@@ -140,16 +163,19 @@ const OrderSummary = () => {
             discount = ApplyCodeResponse?.CouponDiscount;
             setDiscounAmount(discount);
             setIsDiscountApply(true);
-            if (selectedPlan.discount) {
-                selectedPlan.total_pay_amount = selectedPlan.amount;
+            if (state.selectedPlan.discount) {
+                state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
             }
-            selectedPlan.total_pay_amount = (selectedPlan.total_pay_amount - discount).toFixed(2);
-            selectedPlan.discount = discount;
-            selectedPlan.couponCode = couponCode;
-            setPayAmount(selectedPlan.total_pay_amount);
-            setSelectedPlan(selectedPlan);
+            state.selectedPlan.total_pay_amount = (state.selectedPlan.total_pay_amount - discount).toFixed(2);
+            state.selectedPlan.discount = discount;
+            state.selectedPlan.couponCode = couponCode;
+            setPayAmount(state.selectedPlan.total_pay_amount);
+            setState((prev: any) => ({ ...prev,
+                selectedPlan:state.selectedPlan
+            }));
+            setSelectedPlan(state.selectedPlan);
 
-            localStorage.setItem('recharge_information', JSON.stringify(selectedPlan));
+            localStorage.setItem('state', JSON.stringify(state));
 
         }
 
@@ -165,15 +191,18 @@ const OrderSummary = () => {
         setCouponCodeError('');
         setIsDiscountApply(false);
         setPayAmount(0);
-        selectedPlan.total_pay_amount = selectedPlan.amount;
-        selectedPlan.discount = 0;
-        selectedPlan.couponCode = '';
-        setSelectedPlan(selectedPlan);
+        state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
+        state.selectedPlan.discount = 0;
+        state.selectedPlan.couponCode = '';
+        setSelectedPlan(state.selectedPlan);
         setDiscounAmount(0);
-        localStorage.setItem('recharge_information', JSON.stringify(selectedPlan));
+        setState((prev: any) => ({ ...prev,
+            selectedPlan:state.selectedPlan
+        }));
 
+        localStorage.setItem('state', JSON.stringify(state));
     }
-    if (isLoading) {
+    if (state.isLoading) {
         return <div id="preloader">
             <div data-loader="dual-ring"></div>
         </div>;
@@ -215,7 +244,7 @@ const OrderSummary = () => {
                         <div className="col-lg-12 text-center mt-5">
                             <h2 className="text-8 mb-4">Order Summary</h2>
                         </div>
-                        {(selectedPlan?.is_recharge) ? (
+                        {(state.selectedPlan?.is_recharge) ? (
                             <>
                                 <div className="col-md-8 col-lg-7 col-xl-8 mx-auto">
                                     <div className="bg-white shadow-sm rounded text-3 p-3 pt-sm-4 pb-sm-5 px-sm-5 mb-0 mb-sm-4">
@@ -226,7 +255,7 @@ const OrderSummary = () => {
                                                 <p className="col-sm text-muted mb-0 mb-sm-3">Mobile Number:</p>
                                             </div>
                                             <div className="col-6 col-lg-6 text-3">
-                                                <p className="col-sm text-sm-end fw-500"> {selectedPlan?.number}</p>
+                                                <p className="col-sm text-sm-end fw-500"> {state.selectedPlan?.number}</p>
                                             </div>
                                         </div>
                                         <div className="row">
@@ -234,7 +263,7 @@ const OrderSummary = () => {
                                                 <p className="col-sm text-muted mb-0 mb-sm-3">Operator/Circle:</p>
                                             </div>
                                             <div className="col-6 col-lg-6 text-3">
-                                                <p className="col-sm text-sm-end fw-500">{selectedPlan?.biller_name} | {selectedPlan?.circle_name}</p>
+                                                <p className="col-sm text-sm-end fw-500">{state.selectedPlan?.biller_name} | {state.selectedPlan?.circle_name}</p>
                                             </div>
                                         </div>
                                         <div className="row">
@@ -242,7 +271,7 @@ const OrderSummary = () => {
                                                 <p className="col-sm text-muted mb-0 mb-sm-3">Plan:</p>
                                             </div>
                                             <div className="col-6 col-lg-6 text-3">
-                                                <p className="col-sm text-sm-end fw-500">{selectedPlan?.plan_category_name}</p>
+                                                <p className="col-sm text-sm-end fw-500">{state.selectedPlan?.plan_category_name}</p>
                                             </div>
                                         </div>
                                         <div className="row">
@@ -250,17 +279,17 @@ const OrderSummary = () => {
                                                 <p className="col-sm text-muted mb-0 mb-sm-3">Validity:</p>
                                             </div>
                                             <div className="col-6 col-lg-6 text-3">
-                                                <p className="col-sm text-sm-end fw-500">{selectedPlan?.validity}</p>
+                                                <p className="col-sm text-sm-end fw-500">{state.selectedPlan?.validity}</p>
                                             </div>
                                         </div>
                                         {
-                                            (selectedPlan?.discount) ? (
+                                            (state.selectedPlan?.discount) ? (
                                                 <div className="row">
                                                     <div className="col-6 col-lg-6 text-3">
                                                         <p className="col-sm text-muted mb-0 mb-sm-3">Discount:</p>
                                                     </div>
                                                     <div className="col-6 col-lg-6 text-3">
-                                                        <p className="col-sm text-sm-end fw-500">{selectedPlan?.discount}</p>
+                                                        <p className="col-sm text-sm-end fw-500">{state.selectedPlan?.discount}</p>
                                                     </div>
                                                 </div>
                                             ) : (
@@ -271,7 +300,7 @@ const OrderSummary = () => {
                                                 <p className="col-sm text-muted mb-0 mb-sm-3">Amount:</p>
                                             </div>
                                             <div className="col-6 col-lg-6 text-3">
-                                                <p className="col-sm text-sm-end fw-500">{selectedPlan?.amount} </p>
+                                                <p className="col-sm text-sm-end fw-500">{state.selectedPlan?.amount} </p>
                                             </div>
                                         </div>
                                         {/* <div className="row">
@@ -288,7 +317,7 @@ const OrderSummary = () => {
                                                     <div className="col-sm text-3 fw-600">Payment Amount:</div>
                                                 </div>
                                                 <div className="col-6 col-lg-6 text-3">
-                                                    <div className="col-sm text-sm-end text-5 fw-500">{selectedPlan?.total_pay_amount}</div>
+                                                    <div className="col-sm text-sm-end text-5 fw-500">{state.selectedPlan?.total_pay_amount}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -300,7 +329,7 @@ const OrderSummary = () => {
                                         <h3 className="text-5 mb-3">Plan Description:</h3>
                                         <hr className="mx-n3" />
                                         <ul className="list-unstyled">
-                                            <li className="mb-2"><span className="float-end mb-2" style={{ textAlign: 'justify' }}>{selectedPlan?.plan_description}</span></li>
+                                            <li className="mb-2"><span className="float-end mb-2" style={{ textAlign: 'justify' }}>{state.selectedPlan?.plan_description}</span></li>
                                         </ul>
                                         <hr />
                                         <br />
@@ -319,13 +348,13 @@ const OrderSummary = () => {
                                                     </div>
                                                     <hr />
                                                 </>
-                                            ):(
+                                            ) : (
                                                 <>
                                                 </>
                                             )
                                         }
 
-                                        
+
                                         <h3 className="text-4 mb-3">Promo Code:</h3>
 
                                         <ul className="promo-code">
@@ -378,7 +407,7 @@ const OrderSummary = () => {
                                             <p className="col-sm text-muted mb-0 mb-sm-3">Connection Number:</p>
                                         </div>
                                         <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{billplanInformation?.ConnectionNumber}</p>
+                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.ConnectionNumber}</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -386,7 +415,7 @@ const OrderSummary = () => {
                                             <p className="col-sm text-muted mb-0 mb-sm-3">Category:</p>
                                         </div>
                                         <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{billplanInformation?.biller_category}</p>
+                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.biller_category}</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -394,7 +423,7 @@ const OrderSummary = () => {
                                             <p className="col-sm text-muted mb-0 mb-sm-3">Operator:</p>
                                         </div>
                                         <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{billplanInformation?.biller_name}</p>
+                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.biller_name}</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -402,7 +431,7 @@ const OrderSummary = () => {
                                             <p className="col-sm text-muted mb-0 mb-sm-3">Validation Date:</p>
                                         </div>
                                         <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{billplanInformation?.validation_date}</p>
+                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.validation_date}</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -410,7 +439,7 @@ const OrderSummary = () => {
                                             <p className="col-sm text-muted mb-0 mb-sm-3">Valid Until:</p>
                                         </div>
                                         <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{billplanInformation?.valid_until}</p>
+                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.valid_until}</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -418,7 +447,7 @@ const OrderSummary = () => {
                                             <p className="col-sm text-muted mb-0 mb-sm-3">Total Payment:</p>
                                         </div>
                                         <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{billplanInformation?.billlist[0]?.net_billamount}</p>
+                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.billlist[0]?.net_billamount}</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -426,7 +455,7 @@ const OrderSummary = () => {
                                             <p className="col-sm text-muted mb-0 mb-sm-3">Remaining Amount:</p>
                                         </div>
                                         <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{billplanInformation?.billlist[0]?.billamount - billplanInformation?.amount}</p>
+                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.billlist[0]?.billamount - billplanInformation?.amount}</p>
                                         </div>
                                     </div>
                                     <div className="bg-light-4 rounded p-3">
@@ -435,7 +464,7 @@ const OrderSummary = () => {
                                                 <div className="col-sm text-3 fw-600">Payment Amount:</div>
                                             </div>
                                             <div className="col-6 col-lg-6 text-3">
-                                                <div className="col-sm text-sm-end text-5 fw-500">{billplanInformation?.amount}</div>
+                                                <div className="col-sm text-sm-end text-5 fw-500">{state.billInformation?.amount}</div>
                                             </div>
                                         </div>
                                     </div>
