@@ -56,6 +56,7 @@ const Payment = () => {
     const [state, setState] = useState<any>({
         selectedCategory: null,
         selectedPlan: null,
+        billInformation:null,
         isLoading: true,
     })
     const [amount, setAmount] = useState<any>(0);
@@ -121,7 +122,8 @@ const Payment = () => {
                 loyaltyPoint: 0,
                 selectedCategory: stateInfo?.selectedCategory,
                 isLoading: false,
-                selectedPlan: stateInfo?.selectedPlan
+                selectedPlan: stateInfo?.selectedPlan,
+                billInformation:stateInfo?.billInformation
             }));
         }
     }, []);
@@ -132,13 +134,13 @@ const Payment = () => {
             setAmount(state.selectedPlan?.total_pay_amount);
             getPaymentMethodList(state.selectedPlan?.billerid);
         }
-        if (billInformation?.billerid) {
+        if (state.billInformation?.billerid) {
             setTxnid(billInformation?.txnid);
             setAmount(billInformation?.amount);
-            getPaymentMethodList(billInformation?.billerid);
+            getPaymentMethodList(state.billInformation?.billerid);
         }
 
-    }, [state.selectedPlan, billInformation]);
+    }, [state.selectedPlan, state.billInformation]);
 
     const handleCardInfo = (event: any) => {
         const { name, value } = event.target;
@@ -620,11 +622,11 @@ const Payment = () => {
                                                         <div className="bg-light-2 rounded p-4 mb-4">
                                                             <h3 className="text-5 mb-4">Payable Amount</h3>
                                                             <ul className="list-unstyled">
-                                                                <li className="mb-2">Connection Number: <span className="float-end text-4 fw-400 text-dark">{billInformation?.ConnectionNumber}</span></li>
-                                                                <li className="mb-2">Category: <span className="float-end text-4 fw-400 text-dark">{billInformation?.biller_category}</span></li>
-                                                                <li className="mb-2">Operator: <span className="float-end text-4 fw-300 text-dark operator-bill">{billInformation?.biller_name}</span></li>
-                                                                <li className="mb-2">Validation Date: <span className="float-end text-4 fw-300 text-dark">{billInformation?.validation_date}</span></li>
-                                                                <li className="mb-2">Valid Until: <span className="float-end text-4 fw-300 text-dark">{billInformation?.valid_until}</span></li>
+                                                                <li className="mb-2">Connection Number: <span className="float-end text-4 fw-400 text-dark">{state.billInformation?.ConnectionNumber}</span></li>
+                                                                <li className="mb-2">Category: <span className="float-end text-4 fw-400 text-dark">{state.billInformation?.biller_category}</span></li>
+                                                                <li className="mb-2">Operator: <span className="float-end text-4 fw-300 text-dark operator-bill">{state.billInformation?.biller_name}</span></li>
+                                                                <li className="mb-2">Validation Date: <span className="float-end text-4 fw-300 text-dark">{state.billInformation?.validation_date}</span></li>
+                                                                <li className="mb-2">Valid Until: <span className="float-end text-4 fw-300 text-dark">{state.billInformation?.valid_until}</span></li>
 
                                                             </ul>
                                                         </div>

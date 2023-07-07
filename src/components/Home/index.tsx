@@ -73,7 +73,6 @@ const Home = () => {
         Payheading: '',
         DefaultMessage: ''
     });
-    const [numberType, setNumberType] = useState(true);
     const [selectedPlan, setSelectedPlan] = useState<selectedPlanI>({
         planid: 0,
         discount: 0,
@@ -164,6 +163,10 @@ const Home = () => {
         setSelectedOption(null)
         setSubCategoryList(options1);
         // setIsLoading(false);
+        setState((prev: any) => ({
+            ...prev,
+            selectedSubCategory: options1
+        }));
 
     }
     async function getGetOperatorDetails(number: Number) {
@@ -247,10 +250,6 @@ const Home = () => {
             setErrorBillerName("Please select any one operator!");
             return false;
         }
-        // if (!billPayForm.ConnectionNumber) {
-        //     setConnectionNumberError("Please Enter connectionNumber!");
-        //     return false;
-        // }
         const RegexPattern = new RegExp(billPayForm.billerInfo.RegexPattern);
         if (!RegexPattern.test(billPayForm.ConnectionNumber)) {
             console.log("If");
