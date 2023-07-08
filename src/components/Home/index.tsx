@@ -146,9 +146,7 @@ const Home = () => {
         setIsLoading(false);
     }
     async function GetSubCategory(categoryId: any) {
-        // setIsLoading(true);
         const subCategoryList = await userService.getGetSubCategoryList(categoryId);
-
         const options1 = subCategoryList.map((subcategory: any) => {
             subcategory.billerParameters.map((billerParameter: any) => {
                 billerParameter.ConnectionNumber = null;
@@ -162,7 +160,6 @@ const Home = () => {
         });
         setSelectedOption(null)
         setSubCategoryList(options1);
-        // setIsLoading(false);
         setState((prev: any) => ({
             ...prev,
             selectedSubCategory: options1

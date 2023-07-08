@@ -135,8 +135,8 @@ const Payment = () => {
             getPaymentMethodList(state.selectedPlan?.billerid);
         }
         if (state.billInformation?.billerid) {
-            setTxnid(billInformation?.txnid);
-            setAmount(billInformation?.amount);
+            setTxnid(state.billInformation?.txnid);
+            setAmount(state.billInformation?.amount);
             getPaymentMethodList(state.billInformation?.billerid);
         }
 
@@ -151,11 +151,11 @@ const Payment = () => {
     };
 
     async function getPaymentMethodList(billerid: number) {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev,isLoading: true}));
         const paymentMethodList: any = await userService.getPaymentMethodList(billerid);
         setPaymentMethods(paymentMethodList);
         setActiveTab(paymentMethodList[0]?.Paymethod);
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev,isLoading: false}));
     }
 
 
@@ -223,11 +223,11 @@ const Payment = () => {
         payPaymentRequestwithUPI(data);
     }
     async function payPaymentRequestwithWallets(data: any) {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev,isLoading: true}));
         const paymentresponse: any = await PaymentService.payPaymentRequestwithWallets(data);
         setHtmlContent(paymentresponse);
         setShow(true);
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev,isLoading: false}));
     }
     const handlePayPaymentWithCard = () => {
         const data = {
@@ -251,18 +251,18 @@ const Payment = () => {
         payPaymentRequestWitCard(data);
     }
     async function payPaymentRequestWitCard(data: any) {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev,isLoading: true}));
         const paymentresponse: any = await PaymentService.payPaymentWithCard(data);
         setHtmlContent(paymentresponse);
         setShow(true);
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev,isLoading: false}));
     }
     async function payPaymentRequestwithUPI(data: any) {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev,isLoading: true}));
         const paymentresponse: any = await PaymentService.payPaymentRequestwithUPI(data);
         setHtmlContent(paymentresponse);
         setShow(true);
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev,isLoading: false}));
     }
     const handleClose = () => setShow(false);
 
@@ -283,15 +283,15 @@ const Payment = () => {
         console.log("giftCardForm===>",giftCardForm);
     }
     async function payApplyGiftCard(data: any) {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev,isLoading: true}));
         const giftresponse: any = await userService.ApplyGiftCard(data);
         setGiftCardResponse(giftresponse);
         console.log("giftresponse====>",giftresponse);
         console.log("giftCardResponse===>",giftCardResponse);
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev,isLoading: false}));
     }
     console.log("state===>",state)
-    if (isLoading) {
+    if (state.isLoading) {
         return <div id="preloader">
             <div data-loader="dual-ring"></div>
         </div>;
@@ -342,7 +342,7 @@ const Payment = () => {
                                             <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {state.selectedPlan?.total_pay_amount}</h2>
 
                                         ) : (
-                                            <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {(billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</h2>
+                                            <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {(state.billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</h2>
 
                                         )}
                                        </div>
@@ -651,14 +651,14 @@ const Payment = () => {
                                                             <h3 className="text-5 mb-4">Payable Amount</h3>
                                                             <ul className="list-unstyled">
                                                                 <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
-                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount}</span></li>
-                                                                <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{billInformation?.billlist[0]?.billamount - billInformation?.amount}</span></li>
+                                                                <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{state.billInformation?.billlist[0]?.billamount}</span></li>
+                                                                <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{state.billInformation?.billlist[0]?.billamount - billInformation?.amount}</span></li>
                                                                 {
-                                                                    state.selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({state.selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{selectedPlan?.discount}</span></li>) : (<span></span>)
+                                                                    state.selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({state.selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{state.selectedPlan?.discount}</span></li>) : (<span></span>)
                                                                 }
                                                             </ul>
                                                             <hr />
-                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{(billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</span></div>
+                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{(state.billInformation?.amount) ?? state.billInformation?.billlist[0]?.billamount}</span></div>
                                                         </div>
                                                     )}
 
