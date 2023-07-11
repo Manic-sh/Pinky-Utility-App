@@ -44,11 +44,6 @@ const OrderSummary = () => {
         plan_description: '',
         couponCode: ''
     });
-    const [couponCode, setCouponCode] = useState('');
-    const [isDiscountApply, setIsDiscountApply] = useState(false);
-    const [discounAmount, setDiscounAmount] = useState(0);
-    const [couponCodeError, setCouponCodeError] = useState('');
-    const [payAmount, setPayAmount] = useState<any>(0);
 
     const [billplanInformation, setBillplanInformation] = useState<billplanInformationIn>({
         ConnectionNumber: "",
@@ -59,37 +54,22 @@ const OrderSummary = () => {
         amount: 0,
         billlist: []
     });
-    const [isLoading, setIsLoading] = useState(false);
-    const [coupons, setCoupons] = useState([]);
-    const [loyaltyPoint, setLoyaltyPoint] = useState(0);
 
     const [state, setState] = useState<any>({
         selectedCategory: null,
         selectedPlan: null,
         isLoading: true,
-        billInformation:null
+        billInformation: null,
+        coupons: []
     })
 
     useEffect(() => {
-        // const recharge_information: any = localStorage.getItem('recharge_information');
-        // if (recharge_information) {
-        //     const recharge_info: any = JSON.parse(recharge_information);
-        //     // recharge_info.total_pay_amount = recharge_info.amount;
-        //     setPayAmount(recharge_info.amount);
-        //     setSelectedPlan(recharge_info);
-        //     getLoyaltyPoints(recharge_info.amount);
-        // }
-        // const billplan_information = localStorage.getItem('billplan_information');
-        // if (billplan_information) {
-        //     const bill_info = JSON.parse(billplan_information);
-        //     setBillplanInformation(bill_info);
-        // }
+
         const state1: any = localStorage.getItem('state');
-        console.log("statestatestatestatestate", state1)
         if (state1) {
             const stateInfo = JSON.parse(state1);
-            console.log("stateInfo====>", stateInfo.selectedCategory);
-            getLoyaltyPoints(stateInfo.selectedPlan?.amount);
+            getCouponCodeList(stateInfo.selectedCategory?.PayCategory)
+            getLoyaltyPoints(stateInfo);
             setState((prev: any) => ({
                 ...prev,
                 loyaltyPoint: 0,
@@ -99,109 +79,131 @@ const OrderSummary = () => {
                 billInformation: stateInfo?.billInformation
             }));
         }
-        console.log("state===>", state);
-
-        getCouponCodeList();
 
     }, []);
-    console.log("state this is===>", state);
-    async function getCouponCodeList() {
-        setState((prev: any) => ({ ...prev,isLoading: true}));
+    async function getCouponCodeList(PayCategory: string) {
+        setState((prev: any) => ({ ...prev, isLoading: true }));
         const data = {
             "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
             "Product": "UTILITY",
-            "Type": "Mobile Prepaid",
+            "Type": PayCategory,
             "CCNumber": ''
         }
         const cuponCodeList = await userService.DisplayCouponCode(data);
-        setCoupons(cuponCodeList.coupons)
-        setState((prev: any) => ({ ...prev,isLoading: false}));
+        setState((prev: any) => ({
+            ...prev,
+            isLoading: false,
+            coupons: (cuponCodeList.coupons) ? cuponCodeList.coupons : []
+        }));
     }
-    async function getLoyaltyPoints(amount: any) {
-        setIsLoading(true);
+    async function getLoyaltyPoints(state:any) {
+        setState((prev: any) => ({ ...prev, isLoading: true }));
         const data = {
             "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
             "Product": "UTILITY",
-            "Type": "Mobile Prepaid",
-            "Amount": amount
+            "Type": state.selectedCategory?.PayCategory,
+            "Amount": (state.selectedPlan?.amount)?state.selectedPlan?.amount:state.billInformation?.amount
         }
         const point = await userService.GetLoyaltyPoints(data);
-        setState((prev: any) => ({ ...prev, loyaltyPoint: point }));
-        setLoyaltyPoint(point);
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev, isLoading: false, loyaltyPoint: point }));
     }
     const applyCouponCode = async (couponCode: any) => {
-        // frist remove coupan theapply
-        setCouponCode('');
-        setCouponCodeError('');
-        setIsDiscountApply(false);
-        setPayAmount(0);
-        state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
-        state.selectedPlan.discount = 0;
-        state.selectedPlan.couponCode = '';
-        setState((prev: any) => ({ ...prev,
-            selectedPlan:state.selectedPlan
-        }));
-        setSelectedPlan(state.selectedPlan);
-        setDiscounAmount(0);
-        localStorage.setItem('state', JSON.stringify(state.selectedPlan));
-
-        setCouponCode(couponCode);
-
-        let discount = 0;
-        const data = {
-            Enquiryno: selectedPlan.planid,
-            Product: "Utility",
-            Type: "Mobile Prepaid",
-            Amount: selectedPlan?.amount,
-            CouponCode: couponCode
-        }
-        const ApplyCodeResponse = await userService.ApplyCouponCode(data);
-        if (!ApplyCodeResponse?.CouponDiscount) {
-            setCouponCodeError("Invalid coupon code")
-        } else {
-            discount = ApplyCodeResponse?.CouponDiscount;
-            setDiscounAmount(discount);
-            setIsDiscountApply(true);
-            if (state.selectedPlan.discount) {
-                state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
-            }
-            state.selectedPlan.total_pay_amount = (state.selectedPlan.total_pay_amount - discount).toFixed(2);
-            state.selectedPlan.discount = discount;
-            state.selectedPlan.couponCode = couponCode;
-            setPayAmount(state.selectedPlan.total_pay_amount);
-            setState((prev: any) => ({ ...prev,
-                selectedPlan:state.selectedPlan
+        if (state.selectedPlan) {
+            state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
+            state.selectedPlan.discount = 0;
+            state.selectedPlan.couponCode = '';
+            setState((prev: any) => ({
+                ...prev,
+                selectedPlan: state.selectedPlan
             }));
             setSelectedPlan(state.selectedPlan);
+            localStorage.setItem('state', JSON.stringify(state.selectedPlan));
+            let discount = 0;
+            const data = {
+                Enquiryno: Math.floor(Math.random() * 1000) + 1000,
+                Product: "Utility",
+                Type: "Mobile Prepaid",
+                Amount: selectedPlan?.amount,
+                CouponCode: couponCode
+            }
+            const ApplyCodeResponse = await userService.ApplyCouponCode(data);
+            if (!ApplyCodeResponse?.CouponDiscount) {
 
-            localStorage.setItem('state', JSON.stringify(state));
+            }
+            else {
+                discount = ApplyCodeResponse?.CouponDiscount;
+                if (state.selectedPlan.discount) {
+                    state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
+                }
+                state.selectedPlan.total_pay_amount = (state.selectedPlan.total_pay_amount - discount).toFixed(2);
+                state.selectedPlan.discount = discount;
+                state.selectedPlan.couponCode = couponCode;
+                setState((prev: any) => ({
+                    ...prev,
+                    selectedPlan: state.selectedPlan
+                }));
+                setSelectedPlan(state.selectedPlan);
 
+                localStorage.setItem('state', JSON.stringify(state));
+
+            }
+        } else {
+
+            state.billInformation.total_pay_amount = state.billInformation?.amount;
+            state.billInformation.discount = 0;
+            state.billInformation.couponCode = '';
+            setState((prev: any) => ({
+                ...prev,
+                billInformation: state.billInformation
+            }));
+            localStorage.setItem('state', JSON.stringify(state.billInformation));
+            let discount = 0;
+            const data = {
+                Enquiryno: Math.floor(Math.random() * 1000) + 1000,
+                Product: "Utility",
+                Type: "Mobile Prepaid",
+                Amount: state.billInformation?.amount,
+                CouponCode: couponCode
+            }
+            const ApplyCodeResponse = await userService.ApplyCouponCode(data);
+            console.log("ApplyCodeResponse==>", ApplyCodeResponse);
+            if (!ApplyCodeResponse?.CouponDiscount) {
+
+            }
+            else {
+                discount = ApplyCodeResponse?.CouponDiscount;
+                if (state.billInformation.discount) {
+                    state.billInformation.total_pay_amount = state.billInformation?.amount;
+                }
+                state.billInformation.total_pay_amount = (state.billInformation.total_pay_amount - discount).toFixed(2);
+                state.billInformation.discount = discount;
+                state.billInformation.couponCode = couponCode;
+                setState((prev: any) => ({
+                    ...prev,
+                    billInformation: state.billInformation
+                }));
+                setSelectedPlan(state.billInformation);
+
+                localStorage.setItem('state', JSON.stringify(state));
+
+            }
         }
 
     }
-    const removeBtn = {
-        marginLeft: ' 60px',
-        color: 'red',
-        cursor: 'pointer'
-    }
     const removeCouponCode = (couponCode: any) => {
-        console.log("removeCouponCode couponCode===>", couponCode);
-        setCouponCode('');
-        setCouponCodeError('');
-        setIsDiscountApply(false);
-        setPayAmount(0);
         state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
         state.selectedPlan.discount = 0;
         state.selectedPlan.couponCode = '';
         setSelectedPlan(state.selectedPlan);
-        setDiscounAmount(0);
-        setState((prev: any) => ({ ...prev,
-            selectedPlan:state.selectedPlan
+
+        setState((prev: any) => ({
+            ...prev,
+            selectedPlan: state.selectedPlan
         }));
 
         localStorage.setItem('state', JSON.stringify(state));
     }
+    console.log("state==============>", state);
     if (state.isLoading) {
         return <div id="preloader">
             <div data-loader="dual-ring"></div>
@@ -335,7 +337,7 @@ const OrderSummary = () => {
                                         <br />
                                         <hr />
                                         {
-                                            (loyaltyPoint > 0) ? (
+                                            (state.loyaltyPoint > 0) ? (
                                                 <>
                                                     <h3 className="text-5 mb-3 mt-2">Loyalty points earned:</h3>
                                                     <div className="row">
@@ -343,7 +345,7 @@ const OrderSummary = () => {
                                                             <p className="col-sm text-muted mb-0 mb-sm-3">Points:</p>
                                                         </div>
                                                         <div className="col-6 col-lg-6 text-3">
-                                                            <p className="col-sm text-sm-end fw-500">{loyaltyPoint}</p>
+                                                            <p className="col-sm text-sm-end fw-500">{state.loyaltyPoint}</p>
                                                         </div>
                                                     </div>
                                                     <hr />
@@ -358,10 +360,10 @@ const OrderSummary = () => {
                                         <h3 className="text-4 mb-3">Promo Code:</h3>
 
                                         <ul className="promo-code">
-                                            {coupons && coupons.map((coupon: any, index: number) => (
+                                            {state.coupons && state.coupons.map((coupon: any, index: number) => (
                                                 <li key={index}>
                                                     {
-                                                        (selectedPlan.couponCode != coupon.CouponCode) ? (
+                                                        (state.selectedPlan.couponCode != coupon.CouponCode) ? (
                                                             <>
                                                                 <span className="d-block text-3 fw-600">{coupon.CouponCode}
                                                                     <span
@@ -381,110 +383,140 @@ const OrderSummary = () => {
                                             ))}
                                         </ul>
                                     </div>
-                                    {/* <div className="bg-white shadow-md rounded p-3 mt-2">
-                                        <h3 className="text-5 mb-3">Earn Extra Point:</h3>
-                                        <hr className="mx-n3" />
-                                        <div className="row">
-                                            <div className="col-md-6">
-                                                <span>Points:</span>
-                                            </div>
-                                            <div className="col-md-6 text-right">
-                                                10
-                                            </div>
-                                        </div>
-                                    </div> */}
                                 </aside>
 
                             </>
 
                         ) : (
-                            <div className="col-md-8 col-lg-7 col-xl-6 mx-auto">
-                                <div className="bg-white shadow-sm rounded text-3 p-3 pt-sm-4 pb-sm-5 px-sm-5 mb-0 mb-sm-4">
-                                    <h3 className="text-5 fw-400 mb-3 mb-sm-4 text-center">Confirm Bill Details</h3>
-                                    <hr className="mx-n3 mx-sm-n5 mb-4" />
-                                    <div className="row">
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-muted mb-0 mb-sm-3">Connection Number:</p>
-                                        </div>
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.ConnectionNumber}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-muted mb-0 mb-sm-3">Category:</p>
-                                        </div>
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.biller_category}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-muted mb-0 mb-sm-3">Operator:</p>
-                                        </div>
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.biller_name}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-muted mb-0 mb-sm-3">Validation Date:</p>
-                                        </div>
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.validation_date}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-muted mb-0 mb-sm-3">Valid Until:</p>
-                                        </div>
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.valid_until}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-muted mb-0 mb-sm-3">Total Payment:</p>
-                                        </div>
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.billlist[0]?.net_billamount}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-muted mb-0 mb-sm-3">Remaining Amount:</p>
-                                        </div>
-                                        <div className="col-6 col-lg-6 text-3">
-                                            <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.billlist[0]?.billamount - billplanInformation?.amount}</p>
-                                        </div>
-                                    </div>
-                                    <div className="bg-light-4 rounded p-3">
+                            <>
+                                <div className="col-md-8 col-lg-7 col-xl-8 mx-auto">
+                                    <div className="bg-white shadow-sm rounded text-3 p-3 pt-sm-4 pb-sm-5 px-sm-5 mb-0 mb-sm-4">
+                                        <h3 className="text-5 fw-400 mb-3 mb-sm-4 text-center">Confirm Bill Details</h3>
+                                        <hr className="mx-n3 mx-sm-n5 mb-4" />
                                         <div className="row">
                                             <div className="col-6 col-lg-6 text-3">
-                                                <div className="col-sm text-3 fw-600">Payment Amount:</div>
+                                                <p className="col-sm text-muted mb-0 mb-sm-3">Connection Number:</p>
                                             </div>
                                             <div className="col-6 col-lg-6 text-3">
-                                                <div className="col-sm text-sm-end text-5 fw-500">{state.billInformation?.amount}</div>
+                                                <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.ConnectionNumber}</p>
                                             </div>
                                         </div>
-                                    </div>
-                                    {/* <p className="text-center my-4"><a className="btn-link" data-bs-toggle="collapse" href="#couponCode" aria-expanded="false" aria-controls="couponCode">Apply a Coupon Code</a></p>
-                                    <div id="couponCode" className="bg-light-3 p-4 rounded collapse">
-                                        <h3 className="text-4">Coupon Code</h3>
-                                        <div className="input-group">
-                                            <input className="form-control" placeholder="Coupon Code" value={couponCode} name='coupon_code' onChange={handelCouponCodeChange} aria-label="Promo Code" type="text" />
-                                            <button className="btn btn-secondary" onClick={applyCouponCode} type="submit">Apply</button>
+                                        <div className="row">
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-muted mb-0 mb-sm-3">Category:</p>
+                                            </div>
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.biller_category}</p>
+                                            </div>
                                         </div>
-                                        {
-                                            isDiscountApply ? (<div>
-                                                <label style={{ color: 'green' }} >{discounAmount} Rupay discount has been applied.</label>
-                                                <span style={removeBtn} onClick={removeCouponCode} >Remove</span>
-                                            </div>) : (<span style={{ color: 'red' }}>{couponCodeError}</span>)
-                                        }
-                                    </div> */}
-                                    <div className="d-grid mt-4"><Link to="/pay/payment" className="btn btn-primary">Make Payment</Link></div>
+                                        <div className="row">
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-muted mb-0 mb-sm-3">Operator:</p>
+                                            </div>
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.biller_name}</p>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-muted mb-0 mb-sm-3">Validation Date:</p>
+                                            </div>
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.validation_date}</p>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-muted mb-0 mb-sm-3">Valid Until:</p>
+                                            </div>
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.valid_until}</p>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-muted mb-0 mb-sm-3">Total Payment:</p>
+                                            </div>
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.billlist[0]?.net_billamount}</p>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-muted mb-0 mb-sm-3">Remaining Amount:</p>
+                                            </div>
+                                            <div className="col-6 col-lg-6 text-3">
+                                                <p className="col-sm text-sm-end fw-500 text-right">{state.billInformation?.billlist[0]?.billamount - state.billInformation?.amount}</p>
+                                            </div>
+                                        </div>
+                                        <div className="bg-light-4 rounded p-3">
+                                            <div className="row">
+                                                <div className="col-6 col-lg-6 text-3">
+                                                    <div className="col-sm text-3 fw-600">Payment Amount:</div>
+                                                </div>
+                                                <div className="col-6 col-lg-6 text-3">
+                                                    <div className="col-sm text-sm-end text-5 fw-500">{state.billInformation?.amount}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="d-grid mt-4"><Link to="/pay/payment" className="btn btn-primary">Make Payment</Link></div>
+                                    </div>
                                 </div>
-                            </div>
+                                <aside className="col-md-4 col-lg-5 col-xl-4">
+                                    <div className="bg-white shadow-md rounded p-3">
+                                        <h3 className="text-5 mb-3">More Detils:</h3>
+                                        <ul className="list-unstyled">
+                                            <li className="mb-2"><span className="float-end mb-2" style={{ textAlign: 'justify' }}>{state.selectedPlan?.plan_description}</span></li>
+                                        </ul>
+                                        <hr />
+                                        <br />
+
+                                        {
+                                            (state.loyaltyPoint > 0) &&
+                                            <>
+                                                <h3 className="text-5 mb-3 mt-2">Loyalty points earned:</h3>
+                                                <div className="row">
+                                                    <div className="col-6 col-lg-6 text-3">
+                                                        <p className="col-sm text-muted mb-0 mb-sm-3">Points:</p>
+                                                    </div>
+                                                    <div className="col-6 col-lg-6 text-3">
+                                                        <p className="col-sm text-sm-end fw-500">{state.loyaltyPoint}</p>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                            </>
+                                        }
+                                        <h3 className="text-4 mb-3">Promo Code:</h3>
+
+                                        <ul className="promo-code">
+                                            {state.coupons && state.coupons.map((coupon: any, index: number) => (
+                                                <>
+                                                    <li key={JSON.stringify(coupon) + index}>
+                                                        {
+                                                            (selectedPlan.couponCode != coupon.CouponCode) ? (
+                                                                <>
+                                                                    <span className="d-block text-3 fw-600">{coupon.CouponCode}
+                                                                        <span
+                                                                            onClick={() => { applyCouponCode(coupon.CouponCode) }} className='promo-code-apply-btn'>Apply </span>
+                                                                    </span>
+                                                                    {coupon.Remarks}</>
+                                                            ) : (
+                                                                <>
+                                                                    <span className="d-block text-3 fw-600">{coupon.CouponCode}
+                                                                        <span onClick={() => { removeCouponCode(coupon.CouponCode) }} className='promo-code-apply-btn' style={{ color: 'red' }}>Remove</span>
+                                                                    </span>
+                                                                    {coupon.Remarks}</>
+                                                            )
+                                                        }
+
+                                                    </li>
+                                                </>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </aside>
+                            </>
+
                         )}
                     </div>
                 </div>

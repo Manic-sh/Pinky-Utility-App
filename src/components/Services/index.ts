@@ -1,4 +1,4 @@
-const apiUrl = 'https://utility.pinkytravels.com/api/UtilityAPI/';
+const apiUrl = 'http://utility.pinkytravels.com/api/UtilityAPI/';
 const GetHomePageData = "GetHomePageData";
 const GetSubCategory = "GetSubCategory";
 const GetOperatorDetails = "GetOperatorDetails";

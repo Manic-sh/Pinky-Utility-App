@@ -21,9 +21,6 @@ function App() {
     const categorylists = await userService.getCategoriesList();
     setCategories(categorylists);
     const newurl = '/' + categorylists[0].slug;
-    console.log("newurl",newurl);
-    console.log("categories===>",categories);
-    // setUrl(newurl);
     setData(data);
     setIsLoading(false);
   }

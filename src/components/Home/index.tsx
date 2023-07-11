@@ -44,10 +44,10 @@ const Home = () => {
         selectedCategory: null,
         selectedSubCategory: null,
         selectedPlan: null,
-        billInformation:null,
+        billInformation: null,
         isLoading: true,
     })
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [subCategoryList, setSubCategoryList] = useState([]);
     const [subCategory, setSubCategory] = useState<subCategoryIn>({
@@ -123,7 +123,6 @@ const Home = () => {
         }
     }, [currentCategory]);
 
-    const location = useLocation();
     const history = useHistory();
 
     async function getCategories() {
@@ -140,10 +139,10 @@ const Home = () => {
         setCurrentCategory(categorylists[0]);
         setState((prev: any) => ({
             ...prev,
-            selectedCategory: categorylists[0]
+            selectedCategory: categorylists[0],
+            isLoading:false
         }));
         setCategories(categorylists);
-        setIsLoading(false);
     }
     async function GetSubCategory(categoryId: any) {
         const subCategoryList = await userService.getGetSubCategoryList(categoryId);
@@ -162,13 +161,12 @@ const Home = () => {
         setSubCategoryList(options1);
         setState((prev: any) => ({
             ...prev,
-            selectedSubCategory: options1
+            selectedSubCategory: options1,
+            isLoading:false
         }));
 
     }
     async function getGetOperatorDetails(number: Number) {
-        console.log("subCategoryList===>", subCategoryList);
-        // setIsLoading(true);
         const operatorDetails = await userService.getGetOperatorDetailsList(number);
         plansInfo.operator = operatorDetails?.billerid;
         plansInfo.circle = operatorDetails?.circle_name;
@@ -193,8 +191,6 @@ const Home = () => {
 
     const handleInputChange = (event: any) => {
         const { name, value } = event.target;
-        // console.log("name===>", name);
-        // console.log("value====>", value);
         setAllPlans([]);
         if (name == 'number') {
             if (/^[0-9]{10}$/.test(value)) {
@@ -210,7 +206,6 @@ const Home = () => {
         }));
     };
     const handleSubmit = (event: any) => {
-        console.log("state===>", state);
         event.preventDefault();
 
         selectedPlan.number = rechargeForm.number;
@@ -227,16 +222,9 @@ const Home = () => {
             return false;
         }
         selectedPlan.total_pay_amount = selectedPlan.amount;
-        // selectedPlan.discount = 0;
         selectedPlan.is_recharge = true;
-        // var txnid = (new Date()).getTime()+ Math.random().toString(16).slice(2);
         var txnid = Math.random().toString(16).slice(2);
         selectedPlan.txnid = txnid;
-        const recharge_information = JSON.stringify(selectedPlan);
-        console.log("recharge_information===>", recharge_information);
-        console.log("state===>", state);
-        // localStorage.removeItem('billplan_information');
-        // localStorage.setItem('recharge_information', recharge_information);
         localStorage.setItem('state', JSON.stringify(state));
         history.push('/pay/order-summary');
     };
@@ -272,59 +260,45 @@ const Home = () => {
             IPAddress: "61.246.34.128",
             MACAddress: '11-AC-58-21-1B-AA'
         }
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev, isLoading: true }));
+        
         const fetchBillPlanData = await userService.fetchBillPlanList(data);
         if (fetchBillPlanData?.validationid) {
             setState((prev: any) => ({
                 ...prev,
-                selectedPlan:null,
+                selectedPlan: null,
                 billInformation: fetchBillPlanData,
+                isLoading:false
             }));
             setBilIInformation(fetchBillPlanData);
             setChargeableAmount(fetchBillPlanData?.billlist[0]?.billamount);
-            // setBillPayForm({ amount: fetchBillPlanData?.billlist[0]?.billamount });
-            // localStorage.removeItem('recharge_information');
-            // fetchBillPlanData.ConnectionNumber = billPayForm.ConnectionNumber;
-            // fetchBillPlanData.amount = billPayForm.amount;
-            // const billplan_information = JSON.stringify(fetchBillPlanData);
-            // localStorage.setItem('billplan_information', billplan_information);
-            // localStorage.setItem('is_recharge', false);
-            // console.log("fetchBillPlanData==>", fetchBillPlanData?.billlist[0]?.billamount)
+
         } else {
             console.log("invalid connection number=======>")
             setConnectionNumberError('invalid connection number');
         }
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev, isLoading: false }));
     }
     const payBillPayment = (event: any) => {//
         event.preventDefault();
         setErrorBillerName('');
-        console.log("billPayForm===>", billPayForm);
-       
+
         if (billInformation?.validationid) {
 
             setBilIInformation(billInformation);
-            
+
             billInformation.ConnectionNumber = subCategory.billerParameters[0]?.ConnectionNumber;//billPayForm.ConnectionNumber;
             billInformation.amount = chargeableAmount;
-            // var txnid = (new Date()).getTime()+ Math.random().toString(16).slice(2);
-            var txnid = Math.random().toString(16).slice(2);
+            let txnid:string = Math.random().toString(16).slice(2);
             billInformation.txnid = txnid;
             billInformation.is_recharge = true;
-            // setBillPayForm({ amount: billInformation?.billlist[0]?.billamount,  });
 
             setState((prev: any) => ({
                 ...prev,
-                selectedPlan:null,
+                selectedPlan: null,
                 billInformation: billInformation,
             }));
-            console.log("billInformation===>",billInformation);
-            console.log("first=============>",state);
-            // const billplan_information = JSON.stringify(billInformation);
             localStorage.setItem('state', JSON.stringify(state));
-            // localStorage.setItem('billplan_information', billplan_information);
-
-            // localStorage.setItem('is_recharge', billInformation.is_recharge);
             history.push('/pay/order-summary');
         }
     }
@@ -383,13 +357,13 @@ const Home = () => {
     };
 
     async function GetCircle(billerid: Number) {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev, isLoading: true }));
         const circleinformation = await userService.getGetCircleList(billerid);
         (circleinformation) ? setCircleList(circleinformation) : setCircleList([]);
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev, isLoading: false }));
     }
     async function FetchPrepaidPlan(billerid: Number, circleName: String) {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev, isLoading: true }));
         const fetchPrepaidPlan = await userService.allFetchPrepaidPlan({ billerid: billerid, CircleName: circleName });
         const prepaidCategoryData = fetchPrepaidPlan.prepaidcategory;
         const prepaidPlanListData = fetchPrepaidPlan.prepaidplanlist;
@@ -398,7 +372,7 @@ const Home = () => {
         (prepaidPlanListData) ? setPrepaidPlanList(prepaidPlanListData) : setPrepaidPlanList([]);
         (prepaidCategoryData) ? setPrepaidCategory(prepaidCategoryData) : setPrepaidCategory([]);
 
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev, isLoading: false }));
     }
 
     const handlePlanChange = (event: any) => {
@@ -441,11 +415,11 @@ const Home = () => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => {
-        setIsLoading(true);
+        setState((prev: any) => ({ ...prev, isLoading: true }));
         (plansInfo.operator) ? GetCircle(plansInfo.operator) : console.log("operator not available");
         if (plansInfo.operator && plansInfo.circle) { FetchPrepaidPlan(plansInfo.operator, plansInfo.circle) };
         setShow(true);
-        setIsLoading(false);
+        setState((prev: any) => ({ ...prev, isLoading: false }));
     }
     const handlePlanTypeChange = (event: any) => {
         let plantype = event.target.value;
@@ -465,7 +439,6 @@ const Home = () => {
             selectedPlan: selectedplan
         }));
         setShow(false);
-        console.log("state===>", state);
     }
     const [isPartialPay, setIsPartialPay] = useState(true);
 
@@ -475,30 +448,20 @@ const Home = () => {
             ...prevProps,
             [name]: value
         }));
-        console.log("subCategory", subCategory.billerParameters);
-        // let billerParameter = subCategory.billerParameters[index];
-        console.log("subCategory.billerParameters[index]=>", subCategory.billerParameters[index]);
-
         const billerParameter = subCategory.billerParameters[index];
         const RegexPattern = new RegExp(billerParameter.RegexPattern);
         if (!RegexPattern.test(event.target.value)) {
-            // console.log("If");
-            // setConnectionNumberError(subCategory.ErrorMsg);
-            // console.log("error");
             billerParameter.isError = true;
-            // return false;
 
         }
         subCategory.billerParameters[index].ConnectionNumber = event.target.value;
-        // console.log("billerParameter===>", billerParameter);
-        // console.log("event", event.target.value);
-        // console.log("subCategory===>", subCategory);
         setSubCategory(subCategory)
     };
     const numErrorStyle = {
         color: 'red'
     };
-    if (isLoading) {
+    console.log("state===>",state);
+    if (state.isLoading) {
         return <div id="preloader">
             <div data-loader="dual-ring"></div>
         </div>;
