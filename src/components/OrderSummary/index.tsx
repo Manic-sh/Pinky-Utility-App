@@ -68,6 +68,7 @@ const OrderSummary = () => {
         const state1: any = localStorage.getItem('state');
         if (state1) {
             const stateInfo = JSON.parse(state1);
+            stateInfo.billInformation.total_pay_amount = stateInfo.billInformation?.amount
             getCouponCodeList(stateInfo.selectedCategory?.PayCategory)
             getLoyaltyPoints(stateInfo);
             setState((prev: any) => ({
@@ -96,13 +97,13 @@ const OrderSummary = () => {
             coupons: (cuponCodeList.coupons) ? cuponCodeList.coupons : []
         }));
     }
-    async function getLoyaltyPoints(state:any) {
+    async function getLoyaltyPoints(state: any) {
         setState((prev: any) => ({ ...prev, isLoading: true }));
         const data = {
             "Enquiryno": Math.floor(Math.random() * 1000) + 1000,
             "Product": "UTILITY",
             "Type": state.selectedCategory?.PayCategory,
-            "Amount": (state.selectedPlan?.amount)?state.selectedPlan?.amount:state.billInformation?.amount
+            "Amount": (state.selectedPlan?.amount) ? state.selectedPlan?.amount : state.billInformation?.amount
         }
         const point = await userService.GetLoyaltyPoints(data);
         setState((prev: any) => ({ ...prev, isLoading: false, loyaltyPoint: point }));
@@ -122,7 +123,7 @@ const OrderSummary = () => {
             const data = {
                 Enquiryno: Math.floor(Math.random() * 1000) + 1000,
                 Product: "Utility",
-                Type: "Mobile Prepaid",
+                Type: state.selectedCategory?.PayCategory,
                 Amount: selectedPlan?.amount,
                 CouponCode: couponCode
             }
@@ -156,17 +157,18 @@ const OrderSummary = () => {
                 ...prev,
                 billInformation: state.billInformation
             }));
-            localStorage.setItem('state', JSON.stringify(state.billInformation));
+
+            localStorage.setItem('state', JSON.stringify(state));
+            
             let discount = 0;
             const data = {
                 Enquiryno: Math.floor(Math.random() * 1000) + 1000,
                 Product: "Utility",
-                Type: "Mobile Prepaid",
+                Type: state.selectedCategory?.PayCategory,
                 Amount: state.billInformation?.amount,
                 CouponCode: couponCode
             }
             const ApplyCodeResponse = await userService.ApplyCouponCode(data);
-            console.log("ApplyCodeResponse==>", ApplyCodeResponse);
             if (!ApplyCodeResponse?.CouponDiscount) {
 
             }
@@ -191,19 +193,32 @@ const OrderSummary = () => {
 
     }
     const removeCouponCode = (couponCode: any) => {
-        state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
-        state.selectedPlan.discount = 0;
-        state.selectedPlan.couponCode = '';
-        setSelectedPlan(state.selectedPlan);
+        if (state.selectedPlan) {
+            state.selectedPlan.total_pay_amount = state.selectedPlan?.amount;
+            state.selectedPlan.discount = 0;
+            state.selectedPlan.couponCode = '';
+            setSelectedPlan(state.selectedPlan);
 
-        setState((prev: any) => ({
-            ...prev,
-            selectedPlan: state.selectedPlan
-        }));
+            setState((prev: any) => ({
+                ...prev,
+                selectedPlan: state.selectedPlan
+            }));
 
-        localStorage.setItem('state', JSON.stringify(state));
+            localStorage.setItem('state', JSON.stringify(state));
+        } else {
+            state.billInformation.total_pay_amount = state.billInformation?.amount;
+            state.billInformation.discount = 0;
+            state.billInformation.couponCode = '';
+            setState((prev: any) => ({
+                ...prev,
+                billInformation: state.billInformation
+            }));
+
+            localStorage.setItem('state', JSON.stringify(state));
+        }
+
+
     }
-    console.log("state==============>", state);
     if (state.isLoading) {
         return <div id="preloader">
             <div data-loader="dual-ring"></div>
@@ -455,7 +470,7 @@ const OrderSummary = () => {
                                                     <div className="col-sm text-3 fw-600">Payment Amount:</div>
                                                 </div>
                                                 <div className="col-6 col-lg-6 text-3">
-                                                    <div className="col-sm text-sm-end text-5 fw-500">{state.billInformation?.amount}</div>
+                                                    <div className="col-sm text-sm-end text-5 fw-500">{state.billInformation?.total_pay_amount}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -493,7 +508,7 @@ const OrderSummary = () => {
                                                 <>
                                                     <li key={JSON.stringify(coupon) + index}>
                                                         {
-                                                            (selectedPlan.couponCode != coupon.CouponCode) ? (
+                                                            (state.billInformation.couponCode != coupon.CouponCode) ? (
                                                                 <>
                                                                     <span className="d-block text-3 fw-600">{coupon.CouponCode}
                                                                         <span

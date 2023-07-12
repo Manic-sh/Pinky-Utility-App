@@ -95,28 +95,9 @@ const Payment = () => {
     const surl = window.location.origin + "/#/pay/payment-cancel";
 
     useEffect(() => {
-        // const recharge_information = localStorage.getItem('recharge_information');
-        // if (recharge_information) {
-        //     let recharge_info = JSON.parse(recharge_information);
-        //     setSelectedPlan(recharge_info);
-        // }
-        // const billplan_information = localStorage.getItem('billplan_information');
-        // if (billplan_information) {
-        //     setBillInformation(JSON.parse(billplan_information));
-        //     console.log("billInformation==>",billInformation);
-        //     console.log("first")
-        // }
-        // const billplan_information = localStorage.getItem('billplan_information');
-        // if (billplan_information) {
-        //     const bill_info: any = JSON.parse(billplan_information);
-        //     console.log("bill_info===>", bill_info);
-        //     setBillInformation(bill_info);
-        // }
         const state1: any = localStorage.getItem('state');
-        console.log("statestatestatestatestate", state1)
         if (state1) {
             const stateInfo = JSON.parse(state1);
-            console.log("stateInfo====>", stateInfo.selectedCategory);
             setState((prev: any) => ({
                 ...prev,
                 loyaltyPoint: 0,
@@ -189,7 +170,7 @@ const Payment = () => {
         let txnid = (selectedPlan?.txnid) ? selectedPlan?.txnid : (billInformation?.txnid);
         const data = {
             txnid: txnid,
-            amount: amount,
+            amount: (state.selectedPlan)?(state.selectedPlan?.total_pay_amount):state.billInformation?.total_pay_amount,
             firstname: "Adnan",
             email: "skgautam7889@gmail.com",
             phone: "8707673327",
@@ -205,10 +186,9 @@ const Payment = () => {
     const handleUPIPayment = (index: number) => {
         // let txnid = (selectedPlan?.txnid) ? selectedPlan?.txnid : (billInformation?.txnid);
         let upi: any = upis[index];
-        console.log("upi===>", upi);
         const data = {
             txnid: Math.random().toString(16).slice(2),
-            amount: amount,
+            amount: (state.selectedPlan)?(state.selectedPlan?.total_pay_amount):state.billInformation?.total_pay_amount,
             firstname: "Adnan",
             email: "skgautam7889@gmail.com",
             phone: '8707673327',
@@ -232,7 +212,7 @@ const Payment = () => {
     const handlePayPaymentWithCard = () => {
         const data = {
             txnid: Math.random().toString(16).slice(2),
-            amount: amount,
+            amount: (state.selectedPlan)?(state.selectedPlan?.total_pay_amount):state.billInformation?.total_pay_amount,
             firstname: "Adnan",
             email: "skgautam7889@gmail.com",
             phone: "8707673327",
@@ -280,17 +260,13 @@ const Payment = () => {
         event.preventDefault();
         
         payApplyGiftCard(giftCardForm);
-        console.log("giftCardForm===>",giftCardForm);
     }
     async function payApplyGiftCard(data: any) {
         setState((prev: any) => ({ ...prev,isLoading: true}));
         const giftresponse: any = await userService.ApplyGiftCard(data);
         setGiftCardResponse(giftresponse);
-        console.log("giftresponse====>",giftresponse);
-        console.log("giftCardResponse===>",giftCardResponse);
         setState((prev: any) => ({ ...prev,isLoading: false}));
     }
-    console.log("state===>",state)
     if (state.isLoading) {
         return <div id="preloader">
             <div data-loader="dual-ring"></div>
@@ -342,7 +318,7 @@ const Payment = () => {
                                             <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {state.selectedPlan?.total_pay_amount}</h2>
 
                                         ) : (
-                                            <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {(state.billInformation?.amount) ?? billInformation?.billlist[0]?.billamount}</h2>
+                                            <h2 className="text-primary d-flex align-items-center m-0"><span className="text-3 text-dark me-1">Total Payable Amount: </span> {(state.billInformation?.total_pay_amount)}</h2>
 
                                         )}
                                        </div>
@@ -652,13 +628,13 @@ const Payment = () => {
                                                             <ul className="list-unstyled">
                                                                 <li className="mb-2">Transaction ID: <span className="float-end text-4 fw-500 text-dark">{txnid}</span></li>
                                                                 <li className="mb-2">Amount <span className="float-end text-4 fw-500 text-dark">{state.billInformation?.billlist[0]?.billamount}</span></li>
-                                                                <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{state.billInformation?.billlist[0]?.billamount - billInformation?.amount}</span></li>
+                                                                <li className="mb-2">Remaining Amount <span className="float-end text-4 fw-500 text-dark">{state.billInformation?.billlist[0]?.billamount - state.billInformation?.total_pay_amount}</span></li>
                                                                 {
                                                                     state.selectedPlan?.discount ? (<li className="mb-2">Discount <span className="text-success">({state.selectedPlan?.discount} Off!)</span> <span className="float-end text-4 fw-500 text-dark">-{state.selectedPlan?.discount}</span></li>) : (<span></span>)
                                                                 }
                                                             </ul>
                                                             <hr />
-                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{(state.billInformation?.amount) ?? state.billInformation?.billlist[0]?.billamount}</span></div>
+                                                            <div className="text-dark text-4 fw-500 py-1"> Total Amount<span className="float-end text-7">{(state.billInformation?.total_pay_amount)}</span></div>
                                                         </div>
                                                     )}
 
