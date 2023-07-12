@@ -1,4 +1,4 @@
-const apiUrl = "http://pg.pkgrp.in/PGWPaymentByCard/";
+const apiUrl = "https://pg.pkgrp.in/PGWPaymentByCard/";
 const PaymentRequestwithWallets = "PaymentRequestwithWallets";
 const PaymentRequestwithUPI = "PaymentRequestwithUPI";
 const PaymentWithCard = "PaymentWithCard";
