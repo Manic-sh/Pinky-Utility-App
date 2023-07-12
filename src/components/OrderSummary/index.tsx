@@ -68,7 +68,9 @@ const OrderSummary = () => {
         const state1: any = localStorage.getItem('state');
         if (state1) {
             const stateInfo = JSON.parse(state1);
-            stateInfo.billInformation.total_pay_amount = stateInfo.billInformation?.amount
+            if(stateInfo.billInformation){
+                stateInfo.billInformation.total_pay_amount = stateInfo.billInformation?.amount
+            }
             getCouponCodeList(stateInfo.selectedCategory?.PayCategory)
             getLoyaltyPoints(stateInfo);
             setState((prev: any) => ({
