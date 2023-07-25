@@ -1,4 +1,4 @@
-const apiUrl = "https://pg.pkgrp.in/PGWPaymentByCard/";
+const apiUrl = "https://utility.pinkytravels.com/API/Payment/";
 const PaymentRequestwithWallets = "PaymentRequestwithWallets";
 const PaymentRequestwithUPI = "PaymentRequestwithUPI";
 const PaymentWithCard = "PaymentWithCard";

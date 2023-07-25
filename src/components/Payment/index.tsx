@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { userService } from "../Services";
 import { PaymentService } from '../Services/PaymentService';
 import { Modal } from "react-bootstrap";
+const renderHTML = require('react-render-html');
+
 interface selectedPlanI {
     PayId: Number,
     discount: any,
@@ -84,9 +86,6 @@ const Payment = () => {
     const [activeTab, setActiveTab] = useState('');
     const [upis, setUPI] = useState([]);
     const [wallets, setWallets] = useState([]);
-
-    const [htmlContent, setHtmlContent] = useState('');
-    const [show, setShow] = useState(false);
     const [txnid, setTxnid] = useState<any>('');
     const [cardInfo, setCardInfo] = useState(
         { card_number: '5123456789012346', expiry_month: '02', expiry_year: '2028', cvv: '52', card_holder_name: 'suraj' })
@@ -205,8 +204,12 @@ const Payment = () => {
     async function payPaymentRequestwithWallets(data: any) {
         setState((prev: any) => ({ ...prev,isLoading: true}));
         const paymentresponse: any = await PaymentService.payPaymentRequestwithWallets(data);
-        setHtmlContent(paymentresponse);
-        setShow(true);
+        const winUrl = URL.createObjectURL(
+            new Blob([JSON.parse(paymentresponse)], { type: "text/html" })
+        );
+         const link = document.createElement('a');
+         link.href = winUrl;
+         link.click();  
         setState((prev: any) => ({ ...prev,isLoading: false}));
     }
     const handlePayPaymentWithCard = () => {
@@ -233,18 +236,25 @@ const Payment = () => {
     async function payPaymentRequestWitCard(data: any) {
         setState((prev: any) => ({ ...prev,isLoading: true}));
         const paymentresponse: any = await PaymentService.payPaymentWithCard(data);
-        setHtmlContent(paymentresponse);
-        setShow(true);
+        const winUrl = URL.createObjectURL(
+            new Blob([JSON.parse(paymentresponse)], { type: "text/html" })
+        );
+         const link = document.createElement('a');
+         link.href = winUrl;
+         link.click();  
         setState((prev: any) => ({ ...prev,isLoading: false}));
     }
     async function payPaymentRequestwithUPI(data: any) {
         setState((prev: any) => ({ ...prev,isLoading: true}));
         const paymentresponse: any = await PaymentService.payPaymentRequestwithUPI(data);
-        setHtmlContent(paymentresponse);
-        setShow(true);
+        const winUrl = URL.createObjectURL(
+            new Blob([JSON.parse(paymentresponse)], { type: "text/html" })
+        );
+         const link = document.createElement('a');
+         link.href = winUrl;
+         link.click();  
         setState((prev: any) => ({ ...prev,isLoading: false}));
     }
-    const handleClose = () => setShow(false);
 
     //handle on change gift Card Form
     const handleGiftCardForm = (event: any) => {
@@ -654,22 +664,6 @@ const Payment = () => {
                     </div>
                 </div>
             </div>
-            <Modal size="xl" show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    {/* <Modal.Title>Browse Plans</Modal.Title> */}
-                </Modal.Header>
-                <Modal.Body>
-
-                </Modal.Body>
-                <iframe
-                    className="content"
-                    title="HTML Content"
-                    srcDoc={htmlContent}
-                />
-
-                {/* <div dangerouslySetInnerHTML={{ __html: htmlContent }} /> */}
-
-            </Modal>
             <a id="back-to-top" data-bs-toggle="tooltip" title="Back to Top" href="#"><i className="fa fa-chevron-up"></i></a>
         </>
     )
