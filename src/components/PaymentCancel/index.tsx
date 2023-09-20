@@ -12,6 +12,7 @@ const PaymentCancel = () => {
     Refno: "",
     TransActionDate: "",
     TransactionId: "",
+    ModeOfPayment: ''
   });
 
   useEffect(() => {
@@ -95,7 +96,7 @@ const PaymentCancel = () => {
                 <hr />
                 <div className="row">
                   <div className="col-sm text-muted">Mode of Payment</div>
-                  <div className="col-sm text-sm-end fw-600">{state.PaymentType}</div>
+                  <div className="col-sm text-sm-end fw-600">{state.ModeOfPayment}</div>
                 </div>
                 <hr />
                 <div className="row">
@@ -106,21 +107,21 @@ const PaymentCancel = () => {
                 </div>
                 <hr />
                 <div className="row">
-                  <div className="col-sm text-muted">Refno</div>
+                  <div className="col-sm text-muted">Reference Number</div>
                   <div className="col-sm text-sm-end fw-600">{state.Refno}</div>
                 </div>
                 <hr />
                 <div className="row">
-                  <div className="col-sm text-muted">Mobile No</div>
+                  <div className="col-sm text-muted">Utility Number</div>
                   <div className="col-sm text-sm-end fw-600">
-                    (+91) {state.PaymentTypeValue}
+                    {state.PaymentTypeValue}
                   </div>
                 </div>
                 <hr />
                 <div className="row">
                   <div className="col-sm text-muted">Subject</div>
                   <div className="col-sm text-sm-end fw-600">
-                    Mobile Recharge
+                   {state.PaymentType}
                   </div>
                 </div>
                 <hr />
